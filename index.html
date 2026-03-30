@@ -14,3 +14,84 @@
     <p>Этот сайт создан прямо на GitHub Pages без единого файла на компьютере.</p>
 </body>
 </html>
+
+Сделать полноценную анимацию только символами (ASCII-арт), которая бы двигалась сама по себе в браузере, — задача забавная. Мы используем простенький JavaScript, который будет менять две «кадра» жабы по очереди, создавая эффект танца.
+
+Вот готовый код для твоего index.html. Просто удали всё старое и вставь это:
+
+HTML
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Танцующая Жаба</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #32CD32; /* Зеленый цвет жабы */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: monospace; /* Моноширинный шрифт важен для ASCII */
+        }
+        pre {
+            font-size: 20px;
+            line-height: 1.2;
+            font-weight: bold;
+        }
+        h1 {
+            font-family: sans-serif;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Жаба танцует для тебя!</h1>
+    
+    <!-- Сюда скрипт будет выводить кадры -->
+    <pre id="frog"></pre>
+
+    <script>
+        const frogElement = document.getElementById('frog');
+        
+        // Кадр 1
+        const frame1 = `
+    (o  )  (  o)
+     (  )  (  )
+  /-----------\\
+ /  #  #  #  #  \\
+ |  #  #  #  #  |
+ \\             /
+  \\___________/
+   /         \\
+  /           \\
+        `;
+
+        // Кадр 2 (жаба немного "сжимается" и двигает глазами)
+        const frame2 = `
+    ( o )  ( o )
+     (  )  (  )
+   /---------\\
+  / #  #  #  # \\
+  | #  #  #  # |
+   \\           /
+    \\_________/
+    /|       |\\
+   /          \\
+        `;
+
+        let isFrame1 = true;
+
+        // Функция переключения кадров
+        setInterval(() => {
+            frogElement.textContent = isFrame1 ? frame1 : frame2;
+            isFrame1 = !isFrame1;
+        }, 500); // Скорость танца (500 мс = полсекунды)
+    </script>
+
+</body>
+</html>
