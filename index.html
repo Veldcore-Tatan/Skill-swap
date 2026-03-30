@@ -15,15 +15,30 @@
 </body>
 </html>
 
+Понял, давай исправлять. Скорее всего, проблема была в том, что в прошлом коде я использовал e.clientX, который иногда капризничает на мобильных устройствах или внутри блоков, а также из-за бесконечного вращения по центру кликать по жабе было неудобно (центр вращения смещался).
+
+Я переписал код:
+
+Упростил анимацию: Теперь жаба просто стоит, но пульсирует, когда ты на неё наводишь, и сжимается, когда кликаешь.
+
+Сделал зону клика огромной: Теперь не нужно попадать точно в символ, можно кликать по всей области вокруг жабы.
+
+Исправил скрипт: Сделал его максимально простым и надежным.
+
+Замени всё в index.html на этот код:
+
+HTML
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Вращающаяся Жаба</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаба Кликер</title>
     <style>
         body {
-            background-color: #121212;
-            color: #00ff00;
+            background-color: #0d1117;
+            color: #39d353;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -31,71 +46,161 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .score-board {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(57, 211, 83, 0.5);
+        }
+
+        .power-info {
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        /* Контейнер жабы (большая зона для клика) */
+        .frog-area {
+            width: 250px;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(57, 211, 83, 0.05);
+            border-radius: 50%;
+            transition: transform 0.1s;
+            border: 2px solid transparent;
+        }
+
+        .frog-area:hover {
+            border-color: rgba(57, 211, 83, 0.3);
+            transform: scale(1.05);
+        }
+
+        .frog-area:active {
+            transform: scale(0.9);
+        }
+
+        /* Сама жаба (ASCII) */
+        .frog-ascii {
             font-family: monospace;
-        }
-
-        h1 {
-            font-family: sans-serif;
-            margin-bottom: 50px;
-            letter-spacing: 2px;
-        }
-
-        /* Контейнер для вращения */
-        .frog-spinner {
-            font-size: 20px;
-            line-height: 1.1;
+            font-size: 22px;
+            line-height: 1;
             white-space: pre;
-            display: inline-block;
-            /* Анимация вращения: название, время, линейно, бесконечно */
-            animation: spin 2s linear infinite;
-            transform-origin: center; /* Вращение вокруг центра */
+            pointer-events: none; /* Клик проходит сквозь текст на контейнер */
         }
 
-        /* Описание анимации вращения */
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+        .shop {
+            margin-top: 40px;
+            text-align: center;
         }
 
-        .platform {
-            margin-top: 20px;
-            color: #444;
-            font-size: 10px;
+        .buy-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: #2ea043;
+        }
+
+        .buy-btn:disabled {
+            background: #21262d;
+            color: #8b949e;
+            cursor: not-allowed;
+        }
+
+        /* Вылетающие цифры */
+        .plus-one {
+            position: absolute;
+            color: #fff;
+            font-weight: bold;
+            pointer-events: none;
+            animation: moveUp 0.6s ease-out forwards;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <h1>ТУРБО-ЖАБА 360</h1>
+    <div class="score-board">🐸 <span id="score">0</span></div>
+    <div class="power-info">Сила клика: <span id="power">1</span></div>
 
-    <div class="frog-spinner">
-     _      _
-    (o)____(o)
-   /          \
-  /   V    V   \
- |    ______    |
-  \  \______/  /
-   \__________/
-     /      \
-    /        \
+    <div class="frog-area" id="clickTarget">
+        <div class="frog-ascii">
+    _      _
+   (o)____(o)
+  /          \
+ /   V    V   \
+|    ______    |
+ \  \______/  /
+  \__________/
+    /      \
+        </div>
     </div>
 
-    <div class="platform">▲ ПОДОЖДИТЕ, ИДЕТ ЗАГРУЗКА КРУТОСТИ ▲</div>
+    <div class="shop">
+        <button class="buy-btn" id="upgradeBtn">Купить муху (Цена: 10)</button>
+    </div>
 
     <script>
-        // Добавим прикол: при клике жаба меняет направление
-        const frog = document.querySelector('.frog-spinner');
-        let clockwise = true;
+        let score = 0;
+        let power = 1;
+        let cost = 10;
 
-        frog.onclick = () => {
-            clockwise = !clockwise;
-            frog.style.animationDirection = clockwise ? 'normal' : 'reverse';
-        };
+        const scoreDisplay = document.getElementById('score');
+        const powerDisplay = document.getElementById('power');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        const clickTarget = document.getElementById('clickTarget');
+
+        // КЛИК
+        clickTarget.addEventListener('click', (e) => {
+            score += power;
+            updateUI();
+            showPlusText(e.pageX, e.pageY);
+        });
+
+        // АПГРЕЙД
+        upgradeBtn.addEventListener('click', () => {
+            if (score >= cost) {
+                score -= cost;
+                power++;
+                cost = Math.round(cost * 1.6);
+                updateUI();
+            }
+        });
+
+        function updateUI() {
+            scoreDisplay.textContent = score;
+            powerDisplay.textContent = power;
+            upgradeBtn.textContent = `Купить муху (Цена: ${cost})`;
+            upgradeBtn.disabled = score < cost;
+        }
+
+        function showPlusText(x, y) {
+            const div = document.createElement('div');
+            div.className = 'plus-one';
+            div.style.left = x + 'px';
+            div.style.top = y + 'px';
+            div.textContent = '+' + power;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 600);
+        }
     </script>
-
 </body>
 </html>
