@@ -15,4 +15,93 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Танцующая Жаба 2.0</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #4df01b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
+        h1 {
+            font-family: sans-serif;
+            text-shadow: 0 0 10px #4df01b;
+            margin-bottom: 30px;
+        }
+
+        /* Контейнер для анимации */
+        .frog-container {
+            font-size: 18px;
+            line-height: 1.1;
+            white-space: pre;
+            display: inline-block;
+            animation: dance 0.6s infinite alternate ease-in-out;
+            cursor: pointer;
+        }
+
+        /* Анимация танца: подпрыгивание и наклон */
+        @keyframes dance {
+            0% {
+                transform: translateY(0) rotate(-5deg) scaleX(1);
+            }
+            100% {
+                transform: translateY(-30px) rotate(5deg) scaleX(1.1);
+            }
+        }
+
+        .floor {
+            margin-top: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ГИПНОЖАБА ТАНЦУЕТ</h1>
+
+    <div class="frog-container" id="frog">
+        (o)     (o)
+       (  _____  )
+      ( /       \ )
+       \  V   V  /
+        \_______/
+        /       \
+       /         \
+      /  ^     ^  \
+     /            \
+    (___/      \___)
+    </div>
+
+    <div class="floor">_______________________</div>
+
+    <script>
+        // Добавим немного интерактива: при клике жаба ускоряется
+        const frog = document.getElementById('frog');
+        let fast = false;
+
+        frog.onclick = () => {
+            if (!fast) {
+                frog.style.animationDuration = '0.2s';
+                frog.style.color = '#ff00ff'; // Становится рейв-жабой
+                fast = true;
+            } else {
+                frog.style.animationDuration = '0.6s';
+                frog.style.color = '#4df01b';
+                fast = false;
+            }
+        };
+    </script>
+
+</body>
+</html>
