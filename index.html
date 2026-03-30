@@ -19,11 +19,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Танцующая Жаба 2.0</title>
+    <title>Вращающаяся Жаба</title>
     <style>
         body {
-            background-color: #1a1a1a;
-            color: #4df01b;
+            background-color: #121212;
+            color: #00ff00;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -31,75 +31,69 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: monospace;
         }
 
         h1 {
             font-family: sans-serif;
-            text-shadow: 0 0 10px #4df01b;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
+            letter-spacing: 2px;
         }
 
-        /* Контейнер для анимации */
-        .frog-container {
-            font-size: 18px;
+        /* Контейнер для вращения */
+        .frog-spinner {
+            font-size: 20px;
             line-height: 1.1;
             white-space: pre;
             display: inline-block;
-            animation: dance 0.6s infinite alternate ease-in-out;
-            cursor: pointer;
+            /* Анимация вращения: название, время, линейно, бесконечно */
+            animation: spin 2s linear infinite;
+            transform-origin: center; /* Вращение вокруг центра */
         }
 
-        /* Анимация танца: подпрыгивание и наклон */
-        @keyframes dance {
-            0% {
-                transform: translateY(0) rotate(-5deg) scaleX(1);
+        /* Описание анимации вращения */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
             }
-            100% {
-                transform: translateY(-30px) rotate(5deg) scaleX(1.1);
+            to {
+                transform: rotate(360deg);
             }
         }
 
-        .floor {
-            margin-top: 10px;
-            color: #333;
+        .platform {
+            margin-top: 20px;
+            color: #444;
+            font-size: 10px;
         }
     </style>
 </head>
 <body>
 
-    <h1>ГИПНОЖАБА ТАНЦУЕТ</h1>
+    <h1>ТУРБО-ЖАБА 360</h1>
 
-    <div class="frog-container" id="frog">
-        (o)     (o)
-       (  _____  )
-      ( /       \ )
-       \  V   V  /
-        \_______/
-        /       \
-       /         \
-      /  ^     ^  \
-     /            \
-    (___/      \___)
+    <div class="frog-spinner">
+     _      _
+    (o)____(o)
+   /          \
+  /   V    V   \
+ |    ______    |
+  \  \______/  /
+   \__________/
+     /      \
+    /        \
     </div>
 
-    <div class="floor">_______________________</div>
+    <div class="platform">▲ ПОДОЖДИТЕ, ИДЕТ ЗАГРУЗКА КРУТОСТИ ▲</div>
 
     <script>
-        // Добавим немного интерактива: при клике жаба ускоряется
-        const frog = document.getElementById('frog');
-        let fast = false;
+        // Добавим прикол: при клике жаба меняет направление
+        const frog = document.querySelector('.frog-spinner');
+        let clockwise = true;
 
         frog.onclick = () => {
-            if (!fast) {
-                frog.style.animationDuration = '0.2s';
-                frog.style.color = '#ff00ff'; // Становится рейв-жабой
-                fast = true;
-            } else {
-                frog.style.animationDuration = '0.6s';
-                frog.style.color = '#4df01b';
-                fast = false;
-            }
+            clockwise = !clockwise;
+            frog.style.animationDirection = clockwise ? 'normal' : 'reverse';
         };
     </script>
 
