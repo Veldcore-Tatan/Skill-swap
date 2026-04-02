@@ -1,0 +1,29 @@
+import React, { useState } from 'react';
+
+const ResumeForm = () => {
+  const [skill, setSkill] = useState('');
+  const [proofLink, setProofLink] = useState('');
+
+  return (
+    <div className="p-6 bg-white dark:bg-purple-deep rounded-xl shadow-lg transition-colors duration-300">
+      <h2 className="text-2xl font-bold text-purple-dark dark:text-purple-light mb-4">
+        Мои Навыки
+      </h2>
+      <input 
+        type="text" 
+        placeholder="Навык (например, UI-дизайн)" 
+        className="w-full mb-3 p-2 rounded border border-purple-200 dark:bg-purple-dark dark:text-white"
+        onChange={(e) => setSkill(e.target.value)}
+      />
+      <input 
+        type="text" 
+        placeholder="Ссылка на видео (YouTube/Drive) или документ" 
+        className="w-full mb-4 p-2 rounded border border-purple-200 dark:bg-purple-dark dark:text-white"
+        onChange={(e) => setProofLink(e.target.value)}
+      />
+      <button className="bg-purple text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition">
+        Опубликовать навык
+      </button>
+    </div>
+  );
+};
