@@ -3,437 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillFlow - Pro</title>
+    <title>SkillFlow Ultra</title>
     <style>
-        /* CSS ПЕРЕМЕННЫЕ И ТЕМЫ */
         :root {
-            --bg-base: #F5F3FF; 
-            --bg-panel: #FFFFFF;
-            --text-main: #2E1065;
-            --text-muted: #6B7280;
-            --primary: #8B5CF6;
-            --primary-hover: #7C3AED;
-            --border: #DDD6FE;
-            --msg-mine: #8B5CF6;
-            --msg-other: #F3F4F6;
-            --glass: rgba(255, 255, 255, 0.8);
+            --p-main: #8B5CF6; --p-soft: #DDD6FE; --p-dark: #2E1065;
+            --bg: #F5F3FF; --panel: #FFFFFF; --text: #1E1B4B; --text-m: #6B7280;
+            --glass: rgba(255, 255, 255, 0.7);
         }
+
+        /* Пресеты палитр */
+        [data-palette="emerald"] { --p-main: #10B981; --p-dark: #064E3B; --p-soft: #D1FAE5; }
+        [data-palette="rose"] { --p-main: #F43F5E; --p-dark: #881337; --p-soft: #FFE4E6; }
+        [data-palette="classic"] { --p-main: #6366F1; --p-dark: #1E1B4B; --p-soft: #E0E7FF; }
 
         [data-theme="dark"] {
-            --bg-base: #1E1B4B; 
-            --bg-panel: #2E1065;
-            --text-main: #F5F3FF;
-            --text-muted: #A78BFA;
-            --primary: #A78BFA;
-            --primary-hover: #C4B5FD;
-            --border: #4C1D95;
-            --msg-mine: #7C3AED;
-            --msg-other: #3B0764;
-            --glass: rgba(46, 16, 101, 0.8);
+            --bg: #0F172A; --panel: #1E293B; --text: #F1F5F9; --text-m: #94A3B8;
+            --glass: rgba(30, 41, 59, 0.7); --p-soft: rgba(139, 92, 246, 0.2);
         }
 
-        /* БАЗОВЫЕ СТИЛИ И АНИМАЦИИ */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
-        body { background-color: var(--bg-base); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         
-        /* Кастомный скроллбар */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        body { 
+            background-color: var(--bg); color: var(--text); 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        /* Живой фон */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; opacity: 0.6; }
 
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--glass); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 10; }
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-        button { background: var(--primary); color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: transform 0.1s, background 0.2s; }
-        button:hover { background: var(--primary-hover); }
-        button:active { transform: scale(0.95); }
-        input, textarea, select { width: 100%; padding: 0.8rem; background: var(--bg-base); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px; outline: none; margin-bottom: 1rem; }
-        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+        /* Стилизация с эффектом стекла */
+        header, .nav-tabs, .view, .modal-content, .messenger-layout {
+            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
+        }
 
-        /* НАВИГАЦИЯ */
-        .nav-tabs { display: flex; justify-content: center; gap: 1rem; padding: 1rem; background: var(--bg-panel); border-bottom: 1px solid var(--border); }
-        .tab-btn { background: transparent; color: var(--text-muted); border: 2px solid transparent; padding: 0.5rem 1rem; border-radius: 0; }
-        .tab-btn:hover { background: transparent; color: var(--primary); }
-        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2rem; background: var(--glass); z-index: 100; }
+        .nav-tabs { display: flex; justify-content: center; gap: 2rem; background: var(--glass); border-bottom: 1px solid var(--p-soft); }
+        .tab-btn { padding: 1rem; cursor: pointer; font-weight: 600; color: var(--text-m); border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: var(--p-main); border-bottom-color: var(--p-main); }
 
-        /* КОНТЕЙНЕР ДЛЯ ВИДОВ */
-        .app-container { flex: 1; overflow: hidden; position: relative; }
-        .view { display: none; height: 100%; width: 100%; max-width: 1000px; margin: 0 auto; padding: 1.5rem; overflow-y: auto; }
+        .app-main { flex: 1; overflow-y: auto; padding: 2rem; position: relative; }
+        .view { display: none; max-width: 1100px; margin: 0 auto; animation: slideUp 0.4s ease; }
         .view.active { display: block; }
 
-        /* ВИД: ПРОФИЛЬ (Моя страница) */
-        .profile-header { display: flex; gap: 2rem; align-items: center; margin-bottom: 2rem; padding: 1.5rem; background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border); }
-        .avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; font-weight: bold; }
-        .skills-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-        .skill-badge { background: var(--bg-base); border: 1px solid var(--primary); color: var(--primary); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
-        .skill-badge a { color: inherit; text-decoration: none; font-weight: bold; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ВИД: ЛЕНТА И ПОСТЫ */
-        .post-card { background: var(--bg-panel); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .post-header { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.8rem; }
-        .post-author { font-weight: bold; color: var(--primary); }
+        /* Профиль */
+        .profile-card { background: var(--panel); border-radius: 24px; padding: 2rem; display: flex; gap: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .avatar-huge { width: 120px; height: 120px; border-radius: 30px; background: var(--p-main); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; box-shadow: 0 8px 16px var(--p-soft); cursor: pointer; }
 
-        /* ВИД: МЕССЕНДЖЕР (КАК В TELEGRAM/VK) */
-        .messenger-layout { display: flex; height: calc(100vh - 150px); background: var(--bg-panel); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-        
-        .chat-sidebar { width: 320px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .chat-sidebar-header { padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .chat-list { flex: 1; overflow-y: auto; }
-        .chat-item { display: flex; gap: 1rem; padding: 1rem; cursor: pointer; border-bottom: 1px solid var(--bg-base); transition: background 0.2s; }
-        .chat-item:hover, .chat-item.active { background: var(--bg-base); }
-        .chat-item-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-main); flex-shrink: 0; }
-        .chat-item-info { flex: 1; overflow: hidden; }
-        .chat-item-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .chat-item-lastmsg { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.2rem; }
-        .unread-badge { background: var(--primary); color: white; font-size: 0.75rem; padding: 0.1rem 0.5rem; border-radius: 10px; margin-top: 0.2rem; display: inline-block; }
+        /* Мессенджер */
+        .messenger-layout { display: flex; height: 75vh; background: var(--panel); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        .sidebar { width: 300px; border-right: 1px solid var(--p-soft); display: flex; flex-direction: column; }
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.02); }
+        .msg-container { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; }
+        .msg { padding: 0.8rem 1.2rem; border-radius: 18px; max-width: 70%; position: relative; font-size: 0.95rem; }
+        .msg.mine { align-self: flex-end; background: var(--p-main); color: white; border-bottom-right-radius: 4px; }
+        .msg.other { align-self: flex-start; background: var(--bg); border: 1px solid var(--p-soft); border-bottom-left-radius: 4px; }
 
-        .chat-main { flex: 1; display: flex; flex-direction: column; background: var(--bg-base); }
-        .chat-main-header { padding: 1rem; background: var(--bg-panel); border-bottom: 1px solid var(--border); font-weight: bold; display: flex; gap: 1rem; align-items: center; }
-        .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
-        .msg { max-width: 65%; padding: 0.8rem 1rem; border-radius: 16px; position: relative; line-height: 1.4; }
-        .msg.mine { align-self: flex-end; background: var(--msg-mine); color: #fff; border-bottom-right-radius: 4px; }
-        .msg.other { align-self: flex-start; background: var(--msg-other); color: var(--text-main); border-bottom-left-radius: 4px; }
-        .msg-time { font-size: 0.7rem; opacity: 0.7; float: right; margin: 0.5rem 0 -0.2rem 0.5rem; }
-        
-        .chat-input-area { padding: 1rem; background: var(--bg-panel); border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
-        .chat-input-area input { margin: 0; border-radius: 20px; padding: 0.8rem 1.2rem; }
-        .chat-input-area button { border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; padding: 0; }
+        /* Кнопки и формы */
+        button { padding: 0.6rem 1.2rem; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; background: var(--p-main); color: white; transition: 0.2s; }
+        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        input, select, textarea { padding: 0.8rem; border-radius: 12px; border: 1px solid var(--p-soft); background: var(--bg); color: var(--text); outline: none; }
 
-        /* МОДАЛЬНЫЕ ОКНА */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-content { background: var(--bg-panel); padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; border: 1px solid var(--border); transform: scale(0.9); transition: transform 0.3s; }
-        .modal-overlay.active { display: flex; }
-        .modal-overlay.active .modal-content { transform: scale(1); }
-        .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: white; }
+        /* Палитра */
+        .palette-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2); }
+
+        /* Инструкция */
+        #guide { position: fixed; bottom: 20px; right: 20px; background: var(--p-dark); color: white; padding: 1rem; border-radius: 15px; display: none; z-index: 1000; max-width: 250px; }
     </style>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" data-palette="default">
+
+    <canvas id="bg-canvas"></canvas>
 
     <header>
-        <div class="logo">SkillFlow</div>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <button onclick="toggleTheme()" class="btn-outline">🌓 Тема</button>
-            <div id="user-status" style="font-weight: bold; color: var(--primary);">Alex Dev</div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="logo" style="font-size: 1.8rem; font-weight: 900; color: var(--p-main);">SkillFlow</div>
+            <div style="display: flex; gap: 5px;">
+                <div class="palette-dot" style="background: #8B5CF6;" onclick="setPalette('default')"></div>
+                <div class="palette-dot" style="background: #10B981;" onclick="setPalette('emerald')"></div>
+                <div class="palette-dot" style="background: #F43F5E;" onclick="setPalette('rose')"></div>
+                <div class="palette-dot" style="background: #6366F1;" onclick="setPalette('classic')"></div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <button onclick="toggleTheme()" style="background: var(--p-soft); color: var(--p-main);">🌓</button>
+            <button onclick="openModal('edit-profile-modal')">⚙️ Профиль</button>
         </div>
     </header>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('profile')">Моя Страница</button>
-        <button class="tab-btn" onclick="switchTab('feed')">Лента Навыков</button>
-        <button class="tab-btn" onclick="switchTab('messenger')">Сообщения</button>
+        <div class="tab-btn active" onclick="switchTab(event, 'profile')">Профиль</div>
+        <div class="tab-btn" onclick="switchTab(event, 'feed')">Стена</div>
+        <div class="tab-btn" onclick="switchTab(event, 'chat')">Мессенджер</div>
     </div>
 
-    <div class="app-container">
-        
-        <!-- ВИД: ПРОФИЛЬ -->
-        <section id="view-profile" class="view active animate-fade">
-            <div class="profile-header">
-                <div class="avatar">A</div>
-                <div>
-                    <h1 style="margin-bottom: 0.5rem;">Алексей (Alex Dev)</h1>
-                    <p class="text-muted">Меняю знания JS на уроки разговорного английского.</p>
-                    
-                    <div class="skills-container" id="my-skills-list">
-                        <div class="skill-badge">✓ Frontend (React) <a href="#" title="Документ подтвержден">📄</a></div>
-                        <button onclick="openModal('skill-modal')" class="btn-outline" style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;">+ Добавить навык</button>
+    <main class="app-main">
+        <!-- ТУТ ПРОФИЛЬ -->
+        <section id="view-profile" class="view active">
+            <div class="profile-card">
+                <div class="avatar-huge" id="prof-avatar">A</div>
+                <div style="flex: 1;">
+                    <h1 id="prof-name">Alex Skill</h1>
+                    <p id="prof-bio" style="color: var(--text-m); margin: 0.5rem 0;">Senior JS Developer | Обучаю коду за еду</p>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;" id="prof-skills">
+                        <span style="background: var(--p-soft); color: var(--p-main); padding: 0.3rem 0.8rem; border-radius: 8px;">JavaScript</span>
+                        <span style="background: var(--p-soft); color: var(--p-main); padding: 0.3rem 0.8rem; border-radius: 8px;">UI Design</span>
                     </div>
                 </div>
             </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h2>Мои публикации</h2>
-                <button onclick="openModal('post-modal')">Создать пост</button>
-            </div>
-            <div id="my-posts-container">
-                <!-- Посты рендерятся через JS -->
-            </div>
         </section>
 
-        <!-- ВИД: ЛЕНТА -->
-        <section id="view-feed" class="view animate-fade">
-            <h2 style="margin-bottom: 1rem;">Запросы сообщества</h2>
-            <div id="global-feed-container">
-                <!-- Глобальные посты рендерятся через JS -->
+        <!-- ТУТ СТЕНА -->
+        <section id="view-feed" class="view">
+            <div style="background: var(--panel); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+                <textarea id="post-input" placeholder="Поделитесь навыком или мыслью..." style="width: 100%; height: 80px; margin-bottom: 1rem; border: none; background: transparent; font-size: 1.1rem;"></textarea>
+                <button onclick="addPost()">Опубликовать</button>
             </div>
+            <div id="feed-container"></div>
         </section>
 
-        <!-- ВИД: МЕССЕНДЖЕР -->
-        <section id="view-messenger" class="view animate-fade" style="padding: 1rem;">
+        <!-- ТУТ ЧАТ -->
+        <section id="view-chat" class="view">
             <div class="messenger-layout">
-                
-                <!-- Левая панель: Список чатов -->
-                <div class="chat-sidebar">
-                    <div class="chat-sidebar-header">
-                        <h3>Чаты</h3>
-                        <button onclick="openModal('chat-modal')" style="padding: 0.4rem 0.8rem; border-radius: 50%;">+</button>
+                <div class="sidebar">
+                    <div style="padding: 1rem; border-bottom: 1px solid var(--p-soft);">
+                        <button onclick="createGroup()" style="width: 100%;">+ Создать группу</button>
                     </div>
-                    <div class="chat-list" id="chat-list-container">
-                        <!-- Список чатов рендерится через JS -->
+                    <div id="chat-list"></div>
+                </div>
+                <div class="chat-area">
+                    <div id="chat-header" style="padding: 1rem; background: var(--panel); font-weight: bold; border-bottom: 1px solid var(--p-soft);">Выберите чат</div>
+                    <div class="msg-container" id="msg-container"></div>
+                    <div style="padding: 1rem; display: flex; gap: 1rem; background: var(--panel);">
+                        <input type="text" id="chat-input" placeholder="Сообщение..." style="flex: 1; margin: 0;">
+                        <button onclick="sendMsg()">➤</button>
                     </div>
                 </div>
-
-                <!-- Правая панель: Окно чата -->
-                <div class="chat-main" id="chat-main-area" style="display: none;">
-                    <div class="chat-main-header">
-                        <div class="chat-item-avatar" id="active-chat-avatar" style="width: 35px; height: 35px; font-size: 0.9rem;">?</div>
-                        <span id="active-chat-name">Имя чата</span>
-                    </div>
-                    <div class="chat-messages" id="chat-messages-container">
-                        <!-- Сообщения рендерятся через JS -->
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-msg-input" placeholder="Написать сообщение..." onkeypress="handleChatEnter(event)">
-                        <button onclick="sendMessage()">➤</button>
-                    </div>
-                </div>
-                
-                <!-- Заглушка, когда чат не выбран -->
-                <div class="chat-main" id="chat-placeholder" style="align-items: center; justify-content: center; color: var(--text-muted);">
-                    <h3>Выберите чат для начала общения</h3>
-                </div>
-
             </div>
         </section>
+    </main>
 
-    </div>
-
-    <!-- МОДАЛКИ -->
-    <!-- Создание поста -->
-    <div id="post-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Новый пост</h2>
-            <textarea id="new-post-text" rows="4" placeholder="Что вы умеете и чему хотите научиться?"></textarea>
-            <div class="modal-actions">
-                <button class="btn-outline" onclick="closeModal('post-modal')">Отмена</button>
-                <button onclick="createPost()">Опубликовать</button>
+    <!-- МОДАЛКА РЕДАКТИРОВАНИЯ -->
+    <div id="edit-profile-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-content" style="background: var(--panel); padding: 2rem; border-radius: 24px; width: 400px;">
+            <h2>Настройки профиля</h2><br>
+            <input type="text" id="edit-name" placeholder="Имя"><br>
+            <input type="text" id="edit-bio" placeholder="О себе"><br>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button style="background: gray;" onclick="closeModal()">Отмена</button>
+                <button onclick="saveProfile()">Сохранить</button>
             </div>
         </div>
     </div>
 
-    <!-- Создание навыка -->
-    <div id="skill-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Добавить навык</h2>
-            <input type="text" id="new-skill-name" placeholder="Название (например: 3D Blender)">
-            <input type="text" id="new-skill-proof" placeholder="Ссылка на сертификат / портфолио / YouTube">
-            <div class="modal-actions">
-                <button class="btn-outline" onclick="closeModal('skill-modal')">Отмена</button>
-                <button onclick="addSkill()">Сохранить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Создание чата -->
-    <div id="chat-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Создать чат</h2>
-            <select id="new-chat-type">
-                <option value="personal">Личный чат</option>
-                <option value="group">Групповой воркшоп</option>
-            </select>
-            <input type="text" id="new-chat-name" placeholder="Имя пользователя или название группы">
-            <div class="modal-actions">
-                <button class="btn-outline" onclick="closeModal('chat-modal')">Отмена</button>
-                <button onclick="createNewChat()">Создать</button>
-            </div>
-        </div>
+    <div id="guide">
+        <p>👋 Привет! Ты можешь менять цвета сайта в шапке. <br><br> Нажми на Профиль, чтобы настроить свою страницу.</p>
+        <button onclick="this.parentElement.remove()" style="margin-top: 10px; width: 100%;">Понятно</button>
     </div>
 
     <script>
-        // --- 1. STATE (СОСТОЯНИЕ ПРИЛОЖЕНИЯ) ---
-        const state = {
-            currentUser: "Alex Dev",
-            activeChatId: null,
-            posts: [
-                { id: 1, author: "Мария Дизайнер", text: "Готова обучать основам Figma в обмен на помощь с написанием текстов для сайта.", time: "10:30" },
-                { id: 2, author: "Alex Dev", text: "Ищу того, кто подтянет мой разговорный инглиш. Взамен разберем JavaScript с нуля.", time: "Вчера" }
-            ],
-            chats: [
-                { id: 1, name: "Мария Дизайнер", type: "personal", unread: 2, messages: [
-                    { sender: "Мария Дизайнер", text: "Привет! Видела твой пост про JS.", time: "11:00" },
-                    { sender: "Мария Дизайнер", text: "Давай созвонимся вечером?", time: "11:01" }
-                ]},
-                { id: 2, name: "JS Beginners Group", type: "group", unread: 0, messages: [
-                    { sender: "Alex Dev", text: "Всем привет, скидываю полезную ссылку по массивам.", time: "Вчера" },
-                    { sender: "Иван", text: "Спасибо, бро!", time: "Вчера" }
-                ]}
-            ]
-        };
+        // --- 1. ЖИВОЙ ФОН (PARTICLES) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
 
-        // --- 2. НАВИГАЦИЯ И ТЕМА ---
-        function toggleTheme() {
-            const body = document.body;
-            body.dataset.theme = body.dataset.theme === 'dark' ? 'light' : 'dark';
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
         }
 
-        function switchTab(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        for(let i=0; i<50; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--p-main');
+            particles.forEach(p => {
+                p.update();
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 2. СИСТЕМА ПАЛИТРЫ И ТЕМЫ ---
+        function setPalette(p) { document.body.setAttribute('data-palette', p); }
+        function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'; }
+
+        // --- 3. ЛОГИКА ВКЛАДОК ---
+        function switchTab(e, tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            event.currentTarget.classList.add('active');
-
-            if(viewId === 'feed' || viewId === 'profile') renderPosts();
-            if(viewId === 'messenger') renderChatList();
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            e.target.classList.add('active');
+            document.getElementById('view-' + tab).classList.add('active');
         }
 
-        // --- 3. МОДАЛКИ ---
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        // --- 4. РЕДАКТОР ПРОФИЛЯ ---
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById('edit-name').value = document.getElementById('prof-name').innerText;
+            document.getElementById('edit-bio').value = document.getElementById('prof-bio').innerText;
+        }
+        function closeModal() { document.querySelectorAll('[id$="-modal"]').forEach(m => m.style.display = 'none'); }
+        function saveProfile() {
+            document.getElementById('prof-name').innerText = document.getElementById('edit-name').value;
+            document.getElementById('prof-bio').innerText = document.getElementById('edit-bio').value;
+            document.getElementById('prof-avatar').innerText = document.getElementById('edit-name').value[0];
+            closeModal();
+        }
 
-        // --- 4. РЕНДЕР И ЛОГИКА ПОСТОВ/СКИЛЛОВ ---
-        function renderPosts() {
-            const myContainer = document.getElementById('my-posts-container');
-            const globalContainer = document.getElementById('global-feed-container');
-            myContainer.innerHTML = ''; globalContainer.innerHTML = '';
+        // --- 5. СТЕНА (ПОСТЫ) ---
+        function addPost() {
+            const txt = document.getElementById('post-input').value;
+            if(!txt) return;
+            const card = document.createElement('div');
+            card.className = 'profile-card animate-fade';
+            card.style.marginBottom = '1rem';
+            card.innerHTML = `<div><strong>${document.getElementById('prof-name').innerText}</strong><p>${txt}</p><br><small>❤️ 0 | 👁️ 1</small></div>`;
+            document.getElementById('feed-container').prepend(card);
+            document.getElementById('post-input').value = '';
+        }
 
-            state.posts.forEach(post => {
-                const html = `
-                    <div class="post-card animate-fade">
-                        <div class="post-header">
-                            <span class="post-author">${post.author}</span>
-                            <span>${post.time}</span>
-                        </div>
-                        <p>${post.text}</p>
-                    </div>
-                `;
-                globalContainer.innerHTML = html + globalContainer.innerHTML;
-                if(post.author === state.currentUser) {
-                    myContainer.innerHTML = html + myContainer.innerHTML;
-                }
+        // --- 6. ЧАТЫ ---
+        let currentChat = null;
+        const chats = [
+            { id: 1, name: 'Мария (Английский)', msgs: ['Привет! Как успехи в JS?'] },
+            { id: 2, name: 'Группа: Дизайнеры', msgs: ['Кто посмотрит мой макет?'] }
+        ];
+
+        function renderChats() {
+            const list = document.getElementById('chat-list');
+            list.innerHTML = '';
+            chats.forEach(c => {
+                const item = document.createElement('div');
+                item.style.padding = '1rem'; item.style.cursor = 'pointer'; item.style.borderBottom = '1px solid var(--p-soft)';
+                item.innerText = c.name;
+                item.onclick = () => selectChat(c);
+                list.appendChild(item);
             });
         }
 
-        function createPost() {
-            const text = document.getElementById('new-post-text').value;
-            if(!text.trim()) return;
-            state.posts.push({ id: Date.now(), author: state.currentUser, text, time: "Только что" });
-            document.getElementById('new-post-text').value = '';
-            closeModal('post-modal');
-            renderPosts();
-        }
-
-        function addSkill() {
-            const name = document.getElementById('new-skill-name').value;
-            const link = document.getElementById('new-skill-proof').value;
-            if(!name) return;
-            const container = document.getElementById('my-skills-list');
-            const badge = document.createElement('div');
-            badge.className = 'skill-badge animate-fade';
-            badge.innerHTML = `✓ ${name} ${link ? `<a href="${link}" target="_blank" title="Пруф">📄</a>` : ''}`;
-            container.insertBefore(badge, container.lastElementChild);
-            closeModal('skill-modal');
-        }
-
-        // --- 5. ЛОГИКА МЕССЕНДЖЕРА ---
-        function renderChatList() {
-            const container = document.getElementById('chat-list-container');
+        function selectChat(chat) {
+            currentChat = chat;
+            document.getElementById('chat-header').innerText = chat.name;
+            const container = document.getElementById('msg-container');
             container.innerHTML = '';
-            
-            state.chats.forEach(chat => {
-                const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1].text : "Нет сообщений";
-                const initial = chat.type === 'group' ? '👥' : chat.name.charAt(0);
-                
+            chat.msgs.forEach(m => {
                 const div = document.createElement('div');
-                div.className = `chat-item ${state.activeChatId === chat.id ? 'active' : ''}`;
-                div.onclick = () => openChat(chat.id);
-                div.innerHTML = `
-                    <div class="chat-item-avatar">${initial}</div>
-                    <div class="chat-item-info">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span class="chat-item-name">${chat.name}</span>
-                            ${chat.unread > 0 ? `<span class="unread-badge">${chat.unread}</span>` : ''}
-                        </div>
-                        <div class="chat-item-lastmsg">${lastMsg}</div>
-                    </div>
-                `;
+                div.className = 'msg other'; div.innerText = m;
                 container.appendChild(div);
             });
         }
 
-        function openChat(id) {
-            state.activeChatId = id;
-            const chat = state.chats.find(c => c.id === id);
-            chat.unread = 0; // Прочитали
-            
-            document.getElementById('chat-placeholder').style.display = 'none';
-            document.getElementById('chat-main-area').style.display = 'flex';
-            
-            document.getElementById('active-chat-name').innerText = chat.name;
-            document.getElementById('active-chat-avatar').innerText = chat.type === 'group' ? '👥' : chat.name.charAt(0);
-            
-            renderChatList(); // Обновляем сайдбар (сброс бейджиков)
-            renderMessages();
-        }
-
-        function renderMessages() {
-            if(!state.activeChatId) return;
-            const chat = state.chats.find(c => c.id === state.activeChatId);
-            const container = document.getElementById('chat-messages-container');
-            container.innerHTML = '';
-
-            chat.messages.forEach(msg => {
-                const isMine = msg.sender === state.currentUser;
-                // Добавляем галочки для своих сообщений
-                const ticks = isMine ? `<span style="color: #D8B4FE; margin-left: 5px; font-size: 0.7rem;">✓✓</span>` : '';
-                const html = `
-                    <div class="msg ${isMine ? 'mine' : 'other'} animate-fade">
-                        ${chat.type === 'group' && !isMine ? `<div style="font-size: 0.75rem; font-weight: bold; color: var(--primary); margin-bottom: 0.2rem;">${msg.sender}</div>` : ''}
-                        ${msg.text}
-                        <div class="msg-time">${msg.time} ${ticks}</div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendMessage() {
-            const input = document.getElementById('chat-msg-input');
-            const text = input.value.trim();
-            if(!text || !state.activeChatId) return;
-
-            const chat = state.chats.find(c => c.id === state.activeChatId);
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            chat.messages.push({ sender: state.currentUser, text, time });
+        function sendMsg() {
+            const input = document.getElementById('chat-input');
+            if(!input.value || !currentChat) return;
+            const div = document.createElement('div');
+            div.className = 'msg mine'; div.innerText = input.value;
+            document.getElementById('msg-container').appendChild(div);
+            currentChat.msgs.push(input.value);
             input.value = '';
-            
-            renderMessages();
-            renderChatList(); // Обновляем ласт-месседж в списке
+            document.getElementById('msg-container').scrollTop = 9999;
         }
 
-        function handleChatEnter(e) {
-            if (e.key === 'Enter') sendMessage();
+        function createGroup() {
+            const name = prompt("Введите название группы:");
+            if(name) {
+                chats.push({ id: chats.length+1, name: "👥 " + name, msgs: [] });
+                renderChats();
+            }
         }
 
-        function createNewChat() {
-            const name = document.getElementById('new-chat-name').value;
-            const type = document.getElementById('new-chat-type').value;
-            if(!name.trim()) return;
-
-            const newChat = {
-                id: Date.now(),
-                name: name,
-                type: type,
-                unread: 0,
-                messages: []
-            };
-            
-            state.chats.unshift(newChat); // Добавляем в начало
-            document.getElementById('new-chat-name').value = '';
-            closeModal('chat-modal');
-            openChat(newChat.id); // Сразу открываем
+        // Инициализация
+        window.onload = () => {
+            renderChats();
+            setTimeout(() => document.getElementById('guide').style.display = 'block', 2000);
         }
-
-        // Инициализация при старте
-        renderPosts();
     </script>
 </body>
 </html>
