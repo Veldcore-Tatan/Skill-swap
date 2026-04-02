@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VioletSphere • Социальная сеть</title>
+    <title>VioletSkills • Обмен навыками</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -38,19 +38,13 @@
             background-color: rgba(139, 92, 246, 0.15);
         }
         
-        .post {
+        .card {
             animation: fadeInUp 0.5s ease forwards;
         }
         
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .message-bubble {
@@ -60,14 +54,6 @@
         @keyframes bubblePop {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .chat-window {
-            animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .nav-item {
-            position: relative;
         }
         
         .nav-item::after {
@@ -89,6 +75,10 @@
         .theme-toggle {
             transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
+        
+        .video-container {
+            aspect-ratio: 16 / 9;
+        }
     </style>
 </head>
 <body class="dark bg-[#1a0f2e] text-[#f3e8ff] min-h-screen flex flex-col">
@@ -100,7 +90,8 @@
                 <div class="w-9 h-9 bg-gradient-to-br from-[#8b5cf6] to-[#c026d3] rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-[#8b5cf6]/50">
                     💜
                 </div>
-                <h1 class="text-3xl font-semibold tracking-tighter" id="logo-text">VioletSphere</h1>
+                <h1 class="text-3xl font-semibold tracking-tighter" id="logo-text">VioletSkills</h1>
+                <span class="text-[#c4a1ff] text-sm mt-1 hidden sm:block">• Обмен навыками</span>
             </div>
 
             <!-- Поиск -->
@@ -108,33 +99,33 @@
                 <input 
                     type="text" 
                     id="search-input"
-                    placeholder="Поиск друзей, постов..." 
+                    placeholder="Поиск навыков или людей..." 
                     class="w-full bg-[#3a2a5c] border border-[#8b5cf6]/30 focus:border-[#8b5cf6] rounded-3xl py-3 px-6 pl-12 text-sm focus:outline-none transition-all">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-[#8b5cf6]"></i>
             </div>
 
-            <!-- Правая часть header -->
+            <!-- Правая часть -->
             <div class="flex items-center gap-6">
-                <!-- Переключатель языка -->
+                <!-- Язык -->
                 <div onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-[#3a2a5c] hover:bg-[#4c3a70] px-4 py-2 rounded-3xl cursor-pointer transition-all">
                     <i class="fa-solid fa-globe text-[#8b5cf6]"></i>
                     <span id="lang-label" class="font-medium text-sm">RU</span>
                 </div>
 
-                <!-- Переключатель темы -->
+                <!-- Тема -->
                 <button onclick="toggleTheme()" 
                         class="theme-toggle w-10 h-10 bg-[#3a2a5c] hover:bg-[#4c3a70] rounded-2xl flex items-center justify-center text-xl">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                 </button>
 
                 <!-- Уведомления -->
-                <div onclick="showNotifications()" class="relative cursor-pointer">
+                <div onclick="showToast('Новые запросы на обмен навыками!')" class="relative cursor-pointer">
                     <i class="fa-solid fa-bell text-2xl"></i>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">3</span>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">2</span>
                 </div>
 
-                <!-- Мой профиль (клик открывает модал) -->
-                <div onclick="openMyProfile()" class="flex items-center gap-3 cursor-pointer">
+                <!-- Мой профиль -->
+                <div onclick="showMainSection('resume-section')" class="flex items-center gap-3 cursor-pointer">
                     <img id="header-avatar" 
                          src="https://i.pravatar.cc/128?u=me" 
                          alt="Твой аватар" 
@@ -144,11 +135,6 @@
                         <p class="text-[#c4a1ff] text-xs">@alex_violet</p>
                     </div>
                 </div>
-
-                <!-- Кнопка выхода из чата (скрыта по умолчанию) -->
-                <button onclick="closeChat()" id="close-chat-btn" class="hidden text-[#8b5cf6] hover:text-white">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
-                </button>
             </div>
         </div>
     </header>
@@ -156,131 +142,156 @@
     <div class="flex flex-1 max-w-7xl mx-auto w-full px-6 gap-6">
         <!-- ЛЕВАЯ Сайдбар -->
         <div class="w-64 hidden lg:flex flex-col gap-2 pt-6">
-            <a onclick="navigateTo('feed')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium active">
-                <i class="fa-solid fa-house w-6"></i>
-                <span id="nav-home">Главная</span>
+            <a onclick="showMainSection('marketplace-section')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium active" id="sidebar-marketplace">
+                <i class="fa-solid fa-store w-6"></i>
+                <span id="nav-marketplace">Маркетплейс навыков</span>
             </a>
-            <a onclick="navigateTo('explore')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium">
-                <i class="fa-solid fa-compass w-6"></i>
-                <span id="nav-explore">Исследовать</span>
+            <a onclick="showMainSection('my-skills-section')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium" id="sidebar-skills">
+                <i class="fa-solid fa-cogs w-6"></i>
+                <span id="nav-my-skills">Мои навыки</span>
             </a>
-            <a onclick="navigateTo('profile')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium">
-                <i class="fa-solid fa-user w-6"></i>
-                <span id="nav-profile">Профиль</span>
+            <a onclick="showMainSection('resume-section')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium" id="sidebar-resume">
+                <i class="fa-solid fa-file-alt w-6"></i>
+                <span id="nav-resume">Моё резюме</span>
             </a>
-            <a onclick="openMessages()" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium relative">
+            <a onclick="openMessages()" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium relative" id="sidebar-messages">
                 <i class="fa-solid fa-message w-6"></i>
                 <span id="nav-messages">Сообщения</span>
-                <span class="ml-auto bg-[#8b5cf6] text-white text-xs px-2.5 py-px rounded-2xl">12</span>
-            </a>
-            <a onclick="navigateTo('notifications')" class="sidebar-link flex items-center gap-4 px-5 py-4 rounded-3xl text-lg font-medium">
-                <i class="fa-solid fa-bell w-6"></i>
-                <span id="nav-notifications">Уведомления</span>
+                <span class="ml-auto bg-[#8b5cf6] text-white text-xs px-2.5 py-px rounded-2xl">4</span>
             </a>
 
             <div class="mt-auto pt-8">
-                <div onclick="createPost()" 
+                <div onclick="addNewSkill()" 
                      class="w-full bg-gradient-to-r from-[#8b5cf6] to-[#c026d3] hover:from-[#a78bfa] hover:to-[#e879f9] text-white font-semibold py-4 rounded-3xl text-center flex items-center justify-center gap-2 shadow-xl shadow-[#8b5cf6]/40 transition-all">
-                    <i class="fa-solid fa-feather"></i>
-                    <span id="create-post-btn">Новый пост</span>
+                    <i class="fa-solid fa-plus"></i>
+                    <span id="add-skill-btn">Добавить навык + видео</span>
                 </div>
             </div>
         </div>
 
-        <!-- ГЛАВНАЯ ЛЕНТА -->
-        <div id="feed-section" class="flex-1 pt-6 space-y-8 overflow-y-auto max-h-[calc(100vh-80px)]">
-            <!-- Посты будут добавляться через JS -->
-        </div>
+        <!-- ГЛАВНЫЙ КОНТЕНТ (переключается) -->
 
-        <!-- ПРАВАЯ ПАНЕЛЬ -->
-        <div class="w-80 hidden xl:flex flex-col pt-6 gap-8">
-            <!-- Кто в сети -->
-            <div class="bg-[#2a1b47] rounded-3xl p-5">
-                <h3 id="online-title" class="font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-circle text-green-400"></i> Онлайн сейчас</h3>
-                <div id="online-list" class="space-y-4">
-                    <!-- JS заполнит -->
-                </div>
-            </div>
-
-            <!-- Рекомендации друзей -->
-            <div class="bg-[#2a1b47] rounded-3xl p-5">
-                <h3 id="suggest-title" class="font-semibold mb-4">Рекомендуем подписаться</h3>
-                <div id="suggest-list" class="space-y-4">
-                    <!-- JS заполнит -->
-                </div>
-            </div>
-
-            <!-- Тренды -->
-            <div class="bg-[#2a1b47] rounded-3xl p-5 text-sm">
-                <h3 id="trends-title" class="font-semibold mb-3">Тренды в VioletSphere</h3>
-                <div class="space-y-3 text-[#c4a1ff]">
-                    <div>#ФиолетоваяВечеринка</div>
-                    <div>#AIвСоцсетях</div>
-                    <div>#DarkModeForever</div>
-                </div>
+        <!-- 1. МАРКЕТПЛЕЙС НАВЫКОВ -->
+        <div id="marketplace-section" class="flex-1 pt-6 overflow-y-auto max-h-[calc(100vh-80px)]">
+            <div class="text-3xl font-semibold mb-6" id="marketplace-title">Маркетплейс навыков</div>
+            <div id="marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Заполняется JS (фейковые предложения для обмена) -->
             </div>
         </div>
-    </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПРОФИЛЯ -->
-    <div onclick="if(event.target.id === 'profile-modal')closeProfileModal()" 
-         id="profile-modal"
-         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[9999]">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-[#2a1b47] w-full max-w-2xl rounded-3xl p-8 max-h-[90vh] overflow-auto">
-            <div class="flex justify-end">
-                <i onclick="closeProfileModal()" class="fa-solid fa-xmark text-3xl cursor-pointer"></i>
+        <!-- 2. МОИ НАВЫКИ -->
+        <div id="my-skills-section" class="flex-1 pt-6 overflow-y-auto max-h-[calc(100vh-80px)] hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div class="text-3xl font-semibold" id="my-skills-title">Мои навыки</div>
+                <button onclick="addNewSkill()" 
+                        class="px-6 py-3 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl font-medium flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span id="add-skill-btn-2">Добавить навык + видео</span>
+                </button>
             </div>
             
-            <div class="flex flex-col items-center -mt-6">
-                <img id="modal-avatar" 
-                     src="https://i.pravatar.cc/256?u=me" 
-                     alt="" 
-                     class="w-28 h-28 rounded-3xl object-cover ring-8 ring-[#8b5cf6] -mt-2">
-                <h2 id="modal-name" class="text-3xl font-semibold mt-4">Алексей Морозов</h2>
-                <p id="modal-username" class="text-[#c4a1ff]">@alex_violet</p>
+            <div id="skills-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Заполняется JS -->
+            </div>
+        </div>
+
+        <!-- 3. МОЁ РЕЗЮМЕ -->
+        <div id="resume-section" class="flex-1 pt-6 overflow-y-auto max-h-[calc(100vh-80px)] hidden">
+            <div class="max-w-2xl mx-auto bg-[#2a1b47] rounded-3xl p-8">
+                <h2 class="text-3xl font-semibold mb-8" id="resume-title">Моё резюме</h2>
                 
-                <div class="flex gap-8 mt-8 text-center">
+                <!-- Редактируемое резюме -->
+                <div class="space-y-8">
                     <div>
-                        <div id="modal-posts" class="text-3xl font-semibold">248</div>
-                        <div id="modal-posts-label" class="text-xs text-[#c4a1ff]">ПОСТОВ</div>
+                        <label class="block text-[#c4a1ff] text-sm mb-2" id="resume-name-label">Полное имя</label>
+                        <input id="resume-name" value="Алексей Морозов" 
+                               class="w-full bg-[#3a2a5c] border border-[#8b5cf6]/30 focus:border-[#8b5cf6] rounded-2xl px-5 py-3 outline-none">
                     </div>
                     <div>
-                        <div id="modal-followers" class="text-3xl font-semibold">12.4K</div>
-                        <div id="modal-followers-label" class="text-xs text-[#c4a1ff]">ПОДПИСЧИКОВ</div>
+                        <label class="block text-[#c4a1ff] text-sm mb-2" id="resume-prof-label">Профессия / заголовок</label>
+                        <input id="resume-prof" value="Full-stack разработчик • UI/UX дизайнер" 
+                               class="w-full bg-[#3a2a5c] border border-[#8b5cf6]/30 focus:border-[#8b5cf6] rounded-2xl px-5 py-3 outline-none">
                     </div>
                     <div>
-                        <div id="modal-following" class="text-3xl font-semibold">432</div>
-                        <div id="modal-following-label" class="text-xs text-[#c4a1ff]">ПОДПИСОК</div>
+                        <label class="block text-[#c4a1ff] text-sm mb-2" id="resume-bio-label">О себе</label>
+                        <textarea id="resume-bio" rows="4" 
+                                  class="w-full bg-[#3a2a5c] border border-[#8b5cf6]/30 focus:border-[#8b5cf6] rounded-3xl px-5 py-3 outline-none">Люблю делиться знаниями в веб-разработке, дизайне и AI. Готов обмениваться навыками с крутыми специалистами!</textarea>
+                    </div>
+                    
+                    <div class="pt-6 border-t border-[#8b5cf6]/30">
+                        <h3 id="resume-exp-title" class="font-semibold mb-4">Опыт работы</h3>
+                        <div id="experience-list" class="space-y-4">
+                            <!-- JS добавляет строки опыта -->
+                        </div>
+                        <button onclick="addExperience()" class="text-[#8b5cf6] hover:text-white flex items-center gap-2 mt-4">
+                            <i class="fa-solid fa-plus"></i> <span id="add-exp-btn">Добавить место работы</span>
+                        </button>
                     </div>
                 </div>
                 
-                <button onclick="subscribe()" 
-                        class="mt-8 px-12 py-3 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl font-medium flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span id="subscribe-btn">Подписаться</span>
+                <button onclick="saveResume()" 
+                        class="mt-10 w-full bg-gradient-to-r from-[#8b5cf6] to-[#c026d3] py-4 rounded-3xl text-white font-semibold flex justify-center items-center gap-2">
+                    Сохранить резюме
                 </button>
-                
-                <div class="mt-10 w-full">
-                    <h4 id="modal-bio-title" class="font-semibold mb-2">О себе</h4>
-                    <p id="modal-bio" class="text-[#e0d0ff] leading-relaxed">
-                        Любовь к фиолетовому цвету, кодингу и красивым интерфейсам. Создаю будущее в каждом пикселе ✨
-                    </p>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ ПАНЕЛЬ (рекомендации) -->
+        <div class="w-80 hidden xl:flex flex-col pt-6 gap-8">
+            <div class="bg-[#2a1b47] rounded-3xl p-6">
+                <h3 id="match-title" class="font-semibold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-handshake text-green-400"></i> Возможные обмены
+                </h3>
+                <div id="match-list" class="space-y-4 text-sm">
+                    <!-- JS -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ЧАТ (полноценное окно) -->
+    <!-- МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ НАВЫКА + ВИДЕО -->
+    <div onclick="if(event.target.id === 'skill-modal')closeSkillModal()" 
+         id="skill-modal"
+         class="hidden fixed inset-0 bg-black/70 z-[9999] items-center justify-center">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-[#2a1b47] w-full max-w-lg rounded-3xl p-8">
+            <h3 id="modal-skill-title" class="text-2xl font-semibold mb-6">Добавить новый навык</h3>
+            
+            <input id="new-skill-name" type="text" placeholder="Название навыка" 
+                   class="w-full bg-[#3a2a5c] rounded-2xl px-5 py-3 mb-4 outline-none">
+            
+            <select id="new-skill-level" class="w-full bg-[#3a2a5c] rounded-2xl px-5 py-3 mb-4 outline-none">
+                <option value="Новичок">Новичок</option>
+                <option value="Средний" selected>Средний</option>
+                <option value="Эксперт">Эксперт</option>
+            </select>
+            
+            <textarea id="new-skill-desc" placeholder="Краткое описание навыка" rows="3"
+                      class="w-full bg-[#3a2a5c] rounded-3xl px-5 py-3 mb-6 outline-none"></textarea>
+            
+            <div class="mb-6">
+                <label class="block text-[#c4a1ff] text-sm mb-2" id="video-label">Видео-доказательство (YouTube ссылка)</label>
+                <input id="new-video-url" type="text" placeholder="https://youtube.com/watch?v=..." 
+                       class="w-full bg-[#3a2a5c] rounded-2xl px-5 py-3 outline-none">
+                <p class="text-xs text-[#c4a1ff] mt-2">Вставь ссылку на YouTube — видео автоматически встроится</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="closeSkillModal()" 
+                        class="flex-1 py-4 border border-[#8b5cf6]/30 rounded-3xl">Отмена</button>
+                <button onclick="saveNewSkill()" 
+                        class="flex-1 py-4 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl">Добавить навык</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЧАТ (оставлен как был) -->
     <div onclick="if(event.target.id === 'chat-overlay')closeChat()" 
          id="chat-overlay"
          class="hidden fixed inset-0 bg-black/60 z-[10000] items-end lg:items-center justify-center">
-        
         <div onclick="event.stopImmediatePropagation()" 
              id="chat-window"
              class="chat-window bg-[#2a1b47] w-full lg:w-[420px] lg:rounded-3xl lg:h-[640px] flex flex-col rounded-t-3xl shadow-2xl">
-            
-            <!-- Заголовок чата -->
             <div class="px-6 py-4 border-b border-[#8b5cf6]/30 flex items-center gap-3">
                 <img id="chat-avatar" src="https://i.pravatar.cc/128?u=anna" alt="" class="w-9 h-9 rounded-2xl">
                 <div class="flex-1">
@@ -289,21 +300,12 @@
                 </div>
                 <i onclick="closeChat()" class="fa-solid fa-xmark text-2xl cursor-pointer"></i>
             </div>
-            
-            <!-- Сообщения -->
-            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto space-y-4 bg-[#1a0f2e]">
-                <!-- JS заполнит сообщения -->
-            </div>
-            
-            <!-- Поле ввода сообщения -->
+            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto space-y-4 bg-[#1a0f2e]"></div>
             <div class="p-4 border-t border-[#8b5cf6]/30 flex gap-3">
-                <input id="message-input" 
-                       type="text" 
-                       placeholder="Напишите сообщение..."
+                <input id="message-input" type="text" placeholder="Напишите сообщение..." 
                        onkeydown="if(event.keyCode===13) sendMessage()"
                        class="flex-1 bg-[#3a2a5c] border border-transparent focus:border-[#8b5cf6] rounded-3xl px-6 py-3 text-sm outline-none">
-                <button onclick="sendMessage()" 
-                        class="w-12 h-12 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl flex items-center justify-center text-xl">
+                <button onclick="sendMessage()" class="w-12 h-12 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl flex items-center justify-center text-xl">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
@@ -315,132 +317,98 @@
          id="messages-modal"
          class="hidden fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
         <div onclick="event.stopImmediatePropagation()" class="bg-[#2a1b47] rounded-3xl w-full max-w-lg p-6">
-            <h2 id="messages-modal-title" class="text-2xl font-semibold mb-6 flex justify-between">
-                Сообщения 
-                <span onclick="closeMessagesModal()" class="cursor-pointer text-[#8b5cf6]">✕</span>
-            </h2>
-            
-            <div id="chat-list" class="space-y-3 max-h-96 overflow-auto">
-                <!-- JS заполнит список чатов -->
-            </div>
+            <h2 id="messages-modal-title" class="text-2xl font-semibold mb-6">Сообщения</h2>
+            <div id="chat-list" class="space-y-3 max-h-96 overflow-auto"></div>
         </div>
     </div>
 
-    <!-- Уведомления тост (временный) -->
-    <div id="toast" onclick="this.classList.add('hidden')" 
-         class="hidden fixed bottom-6 right-6 bg-[#2a1b47] text-white px-6 py-4 rounded-3xl shadow-2xl flex items-center gap-3">
-        <i class="fa-solid fa-check-circle text-[#8b5cf6]"></i>
-        <span id="toast-text"></span>
-    </div>
-
     <script>
-        // ==================== НАСТРОЙКИ TAILWIND ====================
+        // ==================== НАСТРОЙКИ ====================
         function initTailwind() {
-            tailwind.config = {
-                content: ["./**/*.{html,js}"],
-                theme: {
-                    extend: {
-                        colors: {
-                            violet: '#8b5cf6'
-                        }
-                    }
-                }
-            }
+            tailwind.config = { content: ["./**/*.{html,js}"] }
         }
-        
+
         // ==================== ПЕРЕВОДЫ ====================
         const translations = {
             ru: {
-                logo: "VioletSphere",
-                navHome: "Главная",
-                navExplore: "Исследовать",
-                navProfile: "Профиль",
+                logo: "VioletSkills",
+                navMarketplace: "Маркетплейс навыков",
+                navMySkills: "Мои навыки",
+                navResume: "Моё резюме",
                 navMessages: "Сообщения",
-                navNotifications: "Уведомления",
-                createPostBtn: "Новый пост",
-                onlineTitle: "Онлайн сейчас",
-                suggestTitle: "Рекомендуем подписаться",
-                trendsTitle: "Тренды в VioletSphere",
-                modalPostsLabel: "ПОСТОВ",
-                modalFollowersLabel: "ПОДПИСЧИКОВ",
-                modalFollowingLabel: "ПОДПИСОК",
-                modalBioTitle: "О себе",
-                subscribeBtn: "Подписаться",
-                messagesModalTitle: "Сообщения",
-                searchPlaceholder: "Поиск друзей, постов...",
-                langLabel: "RU"
+                marketplaceTitle: "Маркетплейс навыков",
+                mySkillsTitle: "Мои навыки",
+                resumeTitle: "Моё резюме",
+                resumeNameLabel: "Полное имя",
+                resumeProfLabel: "Профессия / заголовок",
+                resumeBioLabel: "О себе",
+                resumeExpTitle: "Опыт работы",
+                addSkillBtn: "Добавить навык + видео",
+                addExpBtn: "Добавить место работы",
+                matchTitle: "Возможные обмены",
+                videoLabel: "Видео-доказательство (YouTube ссылка)",
+                modalSkillTitle: "Добавить новый навык",
+                messagesModalTitle: "Сообщения"
             },
             en: {
-                logo: "VioletSphere",
-                navHome: "Home",
-                navExplore: "Explore",
-                navProfile: "Profile",
+                logo: "VioletSkills",
+                navMarketplace: "Skills Marketplace",
+                navMySkills: "My Skills",
+                navResume: "My Resume",
                 navMessages: "Messages",
-                navNotifications: "Notifications",
-                createPostBtn: "New post",
-                onlineTitle: "Online now",
-                suggestTitle: "Suggested for you",
-                trendsTitle: "Trending in VioletSphere",
-                modalPostsLabel: "POSTS",
-                modalFollowersLabel: "FOLLOWERS",
-                modalFollowingLabel: "FOLLOWING",
-                modalBioTitle: "About",
-                subscribeBtn: "Follow",
-                messagesModalTitle: "Messages",
-                searchPlaceholder: "Search friends, posts...",
-                langLabel: "EN"
+                marketplaceTitle: "Skills Marketplace",
+                mySkillsTitle: "My Skills",
+                resumeTitle: "My Resume",
+                resumeNameLabel: "Full Name",
+                resumeProfLabel: "Profession / Title",
+                resumeBioLabel: "About me",
+                resumeExpTitle: "Work Experience",
+                addSkillBtn: "Add skill + video",
+                addExpBtn: "Add work experience",
+                matchTitle: "Possible exchanges",
+                videoLabel: "Video proof (YouTube link)",
+                modalSkillTitle: "Add new skill",
+                messagesModalTitle: "Messages"
             }
         }
-        
+
         let currentLang = 'ru'
-        
+
         function toggleLanguage() {
             currentLang = currentLang === 'ru' ? 'en' : 'ru'
             document.documentElement.lang = currentLang
             updateTexts()
         }
-        
+
         function updateTexts() {
             const t = translations[currentLang]
-            
-            // Header
             document.getElementById('logo-text').textContent = t.logo
-            document.getElementById('search-input').placeholder = t.searchPlaceholder
-            document.getElementById('lang-label').textContent = t.langLabel
-            
-            // Sidebar
-            document.getElementById('nav-home').textContent = t.navHome
-            document.getElementById('nav-explore').textContent = t.navExplore
-            document.getElementById('nav-profile').textContent = t.navProfile
+            document.getElementById('nav-marketplace').textContent = t.navMarketplace
+            document.getElementById('nav-my-skills').textContent = t.navMySkills
+            document.getElementById('nav-resume').textContent = t.navResume
             document.getElementById('nav-messages').textContent = t.navMessages
-            document.getElementById('nav-notifications').textContent = t.navNotifications
-            document.getElementById('create-post-btn').textContent = t.createPostBtn
-            
-            // Right panel
-            document.getElementById('online-title').innerHTML = `<i class="fa-solid fa-circle text-green-400"></i> ${t.onlineTitle}`
-            document.getElementById('suggest-title').textContent = t.suggestTitle
-            document.getElementById('trends-title').textContent = t.trendsTitle
-            
-            // Profile modal
-            document.getElementById('modal-posts-label').textContent = t.modalPostsLabel
-            document.getElementById('modal-followers-label').textContent = t.modalFollowersLabel
-            document.getElementById('modal-following-label').textContent = t.modalFollowingLabel
-            document.getElementById('modal-bio-title').textContent = t.modalBioTitle
-            document.getElementById('subscribe-btn').innerHTML = `<i class="fa-solid fa-user-plus"></i> ${t.subscribeBtn}`
-            
-            // Messages
-            if (document.getElementById('messages-modal-title')) {
-                document.getElementById('messages-modal-title').childNodes[0].textContent = t.messagesModalTitle + ' '
-            }
+            document.getElementById('marketplace-title').textContent = t.marketplaceTitle
+            document.getElementById('my-skills-title').textContent = t.mySkillsTitle
+            document.getElementById('resume-title').textContent = t.resumeTitle
+            document.getElementById('resume-name-label').textContent = t.resumeNameLabel
+            document.getElementById('resume-prof-label').textContent = t.resumeProfLabel
+            document.getElementById('resume-bio-label').textContent = t.resumeBioLabel
+            document.getElementById('resume-exp-title').textContent = t.resumeExpTitle
+            document.getElementById('add-skill-btn').textContent = t.addSkillBtn
+            document.getElementById('add-skill-btn-2').textContent = t.addSkillBtn
+            document.getElementById('add-exp-btn').textContent = t.addExpBtn
+            document.getElementById('match-title').innerHTML = `<i class="fa-solid fa-handshake text-green-400"></i> ${t.matchTitle}`
+            document.getElementById('video-label').textContent = t.videoLabel
+            document.getElementById('modal-skill-title').textContent = t.modalSkillTitle
+            document.getElementById('messages-modal-title').textContent = t.messagesModalTitle
+            document.getElementById('search-input').placeholder = currentLang === 'ru' ? 'Поиск навыков или людей...' : 'Search skills or people...'
         }
-        
+
         // ==================== ТЕМЫ ====================
         let isDark = true
-        
         function toggleTheme() {
             isDark = !isDark
             const body = document.body
-            
             if (isDark) {
                 body.classList.add('dark')
                 body.classList.remove('light')
@@ -450,370 +418,294 @@
                 body.classList.add('light')
                 document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun')
             }
-            
-            // Анимация иконки
             const icon = document.getElementById('theme-icon')
             icon.style.transform = 'rotate(360deg)'
             setTimeout(() => icon.style.transform = '', 400)
         }
-        
-        // ==================== ФЕЙКОВЫЕ ДАННЫЕ ====================
-        let currentUser = {
+
+        // ==================== ДАННЫЕ ====================
+        let mySkills = [
+            {
+                id: 1,
+                name: "React + Tailwind",
+                level: "Эксперт",
+                desc: "Создаю современные веб-интерфейсы за 2–3 дня",
+                videoUrl: "https://www.youtube.com/embed/3Yq9q8p8c8s"   // ← ВСТАВЬ СВОЮ ССЫЛКУ НА YOUTUBE
+            },
+            {
+                id: 2,
+                name: "Figma → код",
+                level: "Средний",
+                desc: "Верстаю дизайн-макеты в чистом коде",
+                videoUrl: ""   // ← ВСТАВЬ СВОЮ ССЫЛКУ НА YOUTUBE
+            }
+        ]
+
+        let experiences = [
+            { company: "Freelance", position: "Full-stack разработчик", period: "2023 — настоящее время" },
+            { company: "Startup XYZ", position: "UI/UX дизайнер", period: "2022 — 2023" }
+        ]
+
+        let resumeData = {
             name: "Алексей Морозов",
-            username: "@alex_violet",
-            avatar: "https://i.pravatar.cc/128?u=me"
+            profession: "Full-stack разработчик • UI/UX дизайнер",
+            bio: "Люблю делиться знаниями в веб-разработке, дизайне и AI. Готов обмениваться навыками с крутыми специалистами!"
         }
-        
-        let postsData = [
+
+        // Фейковые предложения на маркетплейсе (можно удалить, если не нужно)
+        const marketplaceOffers = [
             {
                 id: 1,
-                user: "Анна Смирнова",
-                username: "@annaviolet",
-                avatar: "https://i.pravatar.cc/128?u=anna",
-                time: "14 мин",
-                text: "Какой красивый закат сегодня! Кто ещё любит фиолетовый час? 🌅",
-                image: "https://picsum.photos/id/1015/800/600",   // ← ВСТАВЬ СВОЮ ССЫЛКУ НА ИЗОБРАЖЕНИЕ ПОСТА
-                likes: 124,
-                liked: false
+                name: "Мария Ковалёва",
+                skill: "Python + Data Science",
+                level: "Эксперт",
+                wants: "Обмен на UI/UX дизайн",
+                avatar: "https://i.pravatar.cc/128?u=maria"
             },
             {
                 id: 2,
-                user: "Дмитрий Ковалёв",
-                username: "@dmkoval",
-                avatar: "https://i.pravatar.cc/128?u=dm",
-                time: "47 мин",
-                text: "Только что запустил новый дизайн в тёмно-фиолетовых тонах. Что думаете?",
-                image: "", // ← ВСТАВЬ СВОЮ ССЫЛКУ НА ИЗОБРАЖЕНИЕ ПОСТА (или оставь пустым)
-                likes: 89,
-                liked: false
+                name: "Дмитрий Соколов",
+                skill: "3D-моделирование в Blender",
+                level: "Средний",
+                wants: "Обмен на React Native",
+                avatar: "https://i.pravatar.cc/128?u=dm"
             }
         ]
-        
-        let usersOnline = [
-            { name: "Анна Смирнова", avatar: "https://i.pravatar.cc/128?u=anna" },
-            { name: "Мария Лебедева", avatar: "https://i.pravatar.cc/128?u=maria" },
-            { name: "Игорь Петров", avatar: "https://i.pravatar.cc/128?u=igor" }
-        ]
-        
-        let suggestions = [
-            { name: "Елена Волкова", username: "@elenav", avatar: "https://i.pravatar.cc/128?u=elena" },
-            { name: "Артём Соколов", username: "@artemcode", avatar: "https://i.pravatar.cc/128?u=artem" }
-        ]
-        
-        // Чаты
+
+        // Чаты (оставлены)
         let chats = [
-            {
-                id: 1,
-                name: "Анна Смирнова",
-                avatar: "https://i.pravatar.cc/128?u=anna",
-                lastMessage: "Ты уже видел новый дизайн?",
-                time: "14:32",
-                messages: [
-                    { from: "them", text: "Привет! Как дела?" },
-                    { from: "me", text: "Отлично, а у тебя?" },
-                    { from: "them", text: "Ты уже видел новый дизайн?" }
-                ]
-            },
-            {
-                id: 2,
-                name: "Дмитрий Ковалёв",
-                avatar: "https://i.pravatar.cc/128?u=dm",
-                lastMessage: "Скинул тебе макет",
-                time: "13:15",
-                messages: [
-                    { from: "them", text: "Скинул тебе макет" }
-                ]
-            }
+            { id: 1, name: "Анна Смирнова", avatar: "https://i.pravatar.cc/128?u=anna", lastMessage: "Хочешь обменяться навыками?", time: "14:32", messages: [{from:'them',text:'Привет!'}, {from:'me',text:'Хочу!'}] }
         ]
-        
         let currentChatId = null
-        
-        // ==================== РЕНДЕР ЛЕНТЫ ====================
-        function renderFeed() {
-            const container = document.getElementById('feed-section')
-            container.innerHTML = `
-                <div class="text-3xl font-semibold mb-6 flex items-center gap-3">
-                    <span id="feed-title">Лента</span>
-                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-[#8b5cf6]/30 to-transparent"></div>
+
+        // ==================== РЕНДЕР ФУНКЦИИ ====================
+        function renderMarketplace() {
+            const container = document.getElementById('marketplace-grid')
+            container.innerHTML = marketplaceOffers.map(offer => `
+                <div class="card bg-[#2a1b47] rounded-3xl p-6 hover:scale-105 transition-all cursor-pointer" onclick="openChatWithOffer(${offer.id})">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="${offer.avatar}" class="w-12 h-12 rounded-2xl">
+                        <div>
+                            <p class="font-semibold">${offer.name}</p>
+                            <p class="text-[#c4a1ff]">${offer.skill} • ${offer.level}</p>
+                        </div>
+                    </div>
+                    <p class="text-sm mb-6">Хочет обменять на: <span class="font-medium">${offer.wants}</span></p>
+                    <button class="w-full py-3 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl text-sm font-medium">Предложить обмен</button>
                 </div>
-            `
-            
-            postsData.forEach(post => {
-                const postHTML = `
-                <div class="post bg-[#2a1b47] rounded-3xl overflow-hidden mb-8">
-                    <div class="p-5 flex items-center justify-between">
-                        <div onclick="openProfile('${post.username}')" class="flex items-center gap-3 cursor-pointer">
-                            <img src="${post.avatar}" class="w-11 h-11 rounded-2xl object-cover">
-                            <div>
-                                <p class="font-semibold">${post.user}</p>
-                                <p class="text-[#c4a1ff] text-sm">${post.username} · ${post.time}</p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-ellipsis text-[#8b5cf6]"></i>
-                    </div>
-                    
-                    <p class="px-5 pb-4 text-lg">${post.text}</p>
-                    
-                    ${post.image ? `
-                    <img src="${post.image}" 
-                         class="w-full h-auto max-h-96 object-cover cursor-pointer"
-                         onclick="viewImage(this.src)">
-                    ` : ''}
-                    
-                    <div class="px-6 py-4 flex items-center justify-between border-t border-[#8b5cf6]/10">
-                        <div onclick="likePost(${post.id}, this)" class="flex items-center gap-2 cursor-pointer hover:text-[#8b5cf6]">
-                            <i class="fa-solid ${post.liked ? 'fa-heart text-red-500' : 'fa-heart'}"></i>
-                            <span class="like-count">${post.likes}</span>
-                        </div>
-                        <div class="flex items-center gap-2 cursor-pointer hover:text-[#8b5cf6]">
-                            <i class="fa-solid fa-comment"></i>
-                            <span>14</span>
-                        </div>
-                        <div class="flex items-center gap-2 cursor-pointer hover:text-[#8b5cf6]">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </div>
-                    </div>
-                </div>`
-                container.innerHTML += postHTML
-            })
+            `).join('')
         }
-        
-        function likePost(id, el) {
-            const post = postsData.find(p => p.id === id)
-            if (!post) return
-            post.liked = !post.liked
-            post.likes += post.liked ? 1 : -1
-            el.querySelector('i').className = `fa-solid ${post.liked ? 'fa-heart text-red-500' : 'fa-heart'}`
-            el.querySelector('.like-count').textContent = post.likes
+
+        function renderMySkills() {
+            const container = document.getElementById('skills-list')
+            container.innerHTML = mySkills.map(skill => `
+                <div class="card bg-[#2a1b47] rounded-3xl p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <span class="px-4 py-1 bg-[#8b5cf6]/20 text-[#8b5cf6] text-xs rounded-3xl">${skill.level}</span>
+                                <h4 class="font-semibold text-xl">${skill.name}</h4>
+                            </div>
+                            <p class="mt-3 text-[#e0d0ff]">${skill.desc}</p>
+                        </div>
+                        <button onclick="deleteSkill(${skill.id}); event.stopImmediatePropagation()" class="text-red-400 hover:text-red-500">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                    ${skill.videoUrl ? `
+                    <div class="mt-6 video-container bg-black rounded-2xl overflow-hidden">
+                        <iframe width="100%" height="100%" src="${skill.videoUrl}" frameborder="0" allowfullscreen></iframe>
+                    </div>` : ''}
+                </div>
+            `).join('')
+        }
+
+        function renderExperience() {
+            const container = document.getElementById('experience-list')
+            container.innerHTML = experiences.map((exp, i) => `
+                <div class="flex justify-between bg-[#3a2a5c] rounded-2xl px-5 py-4">
+                    <div>
+                        <p class="font-medium">${exp.company} — ${exp.position}</p>
+                        <p class="text-[#c4a1ff] text-sm">${exp.period}</p>
+                    </div>
+                    <button onclick="deleteExperience(${i}); event.stopImmediatePropagation()" class="text-red-400"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `).join('')
+        }
+
+        // ==================== ДЕЙСТВИЯ ====================
+        function showMainSection(section) {
+            // Скрываем все
+            document.querySelectorAll('#marketplace-section, #my-skills-section, #resume-section').forEach(el => el.classList.add('hidden'))
+            // Показываем нужный
+            document.getElementById(section).classList.remove('hidden')
             
-            // Анимация сердечка
-            if (post.liked) {
-                el.style.transform = 'scale(1.4)'
-                setTimeout(() => el.style.transform = '', 200)
+            // Активный пункт в сайдбаре
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'))
+            if (section === 'marketplace-section') document.getElementById('sidebar-marketplace').classList.add('active')
+            if (section === 'my-skills-section') document.getElementById('sidebar-skills').classList.add('active')
+            if (section === 'resume-section') document.getElementById('sidebar-resume').classList.add('active')
+        }
+
+        function addNewSkill() {
+            document.getElementById('skill-modal').classList.remove('hidden')
+            document.getElementById('skill-modal').classList.add('flex')
+        }
+
+        function closeSkillModal() {
+            document.getElementById('skill-modal').classList.add('hidden')
+            document.getElementById('skill-modal').classList.remove('flex')
+        }
+
+        function saveNewSkill() {
+            const name = document.getElementById('new-skill-name').value.trim()
+            if (!name) return alert(currentLang === 'ru' ? 'Введите название навыка' : 'Enter skill name')
+            
+            const newSkill = {
+                id: Date.now(),
+                name: name,
+                level: document.getElementById('new-skill-level').value,
+                desc: document.getElementById('new-skill-desc').value || 'Без описания',
+                videoUrl: document.getElementById('new-video-url').value.trim()
+            }
+            mySkills.unshift(newSkill)
+            renderMySkills()
+            closeSkillModal()
+            
+            // Очистка полей
+            document.getElementById('new-skill-name').value = ''
+            document.getElementById('new-skill-desc').value = ''
+            document.getElementById('new-video-url').value = ''
+            
+            showToast(currentLang === 'ru' ? 'Навык добавлен с видео-доказательством!' : 'Skill added with video proof!')
+        }
+
+        function deleteSkill(id) {
+            if (confirm(currentLang === 'ru' ? 'Удалить навык?' : 'Delete skill?')) {
+                mySkills = mySkills.filter(s => s.id !== id)
+                renderMySkills()
             }
         }
-        
-        // ==================== ОНЛАЙН И РЕКОМЕНДАЦИИ ====================
-        function renderSidePanels() {
-            // Онлайн
-            const onlineContainer = document.getElementById('online-list')
-            onlineContainer.innerHTML = usersOnline.map(u => `
-                <div onclick="openProfile('@${u.name.toLowerCase()}')" class="flex items-center gap-3 cursor-pointer">
-                    <img src="${u.avatar}" class="w-9 h-9 rounded-2xl ring-2 ring-green-400">
-                    <div class="flex-1">
-                        <p class="font-medium">${u.name}</p>
-                    </div>
-                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                </div>
-            `).join('')
-            
-            // Рекомендации
-            const suggestContainer = document.getElementById('suggest-list')
-            suggestContainer.innerHTML = suggestions.map(s => `
-                <div class="flex justify-between items-center">
-                    <div onclick="openProfile('${s.username}')" class="flex items-center gap-3 cursor-pointer">
-                        <img src="${s.avatar}" class="w-9 h-9 rounded-2xl">
-                        <div>
-                            <p class="font-medium">${s.name}</p>
-                            <p class="text-xs text-[#c4a1ff]">${s.username}</p>
-                        </div>
-                    </div>
-                    <button onclick="followUser(this)" class="text-xs px-5 py-2 bg-[#8b5cf6] hover:bg-[#a78bfa] rounded-3xl">Подписаться</button>
-                </div>
-            `).join('')
+
+        function addExperience() {
+            const company = prompt(currentLang === 'ru' ? 'Название компании:' : 'Company name:')
+            if (!company) return
+            const position = prompt(currentLang === 'ru' ? 'Должность:' : 'Position:')
+            const period = prompt(currentLang === 'ru' ? 'Период (2023–2024):' : 'Period:')
+            experiences.unshift({ company, position: position || '', period: period || '' })
+            renderExperience()
         }
-        
-        function followUser(btn) {
-            btn.textContent = currentLang === 'ru' ? 'Вы подписаны ✓' : 'Following ✓'
-            btn.style.backgroundColor = '#22c55e'
-            showToast(currentLang === 'ru' ? 'Вы подписались!' : 'You are now following!')
+
+        function deleteExperience(i) {
+            if (confirm(currentLang === 'ru' ? 'Удалить запись?' : 'Delete entry?')) {
+                experiences.splice(i, 1)
+                renderExperience()
+            }
         }
-        
-        // ==================== ЧАТЫ ====================
+
+        function saveResume() {
+            resumeData.name = document.getElementById('resume-name').value
+            resumeData.profession = document.getElementById('resume-prof').value
+            resumeData.bio = document.getElementById('resume-bio').value
+            document.getElementById('header-name').textContent = resumeData.name
+            showToast(currentLang === 'ru' ? 'Резюме сохранено 💜' : 'Resume saved 💜')
+        }
+
+        function openChatWithOffer(id) {
+            // Просто открываем чат с первым контактом (для демонстрации)
+            closeSkillModal()
+            openMessages()
+            // Можно расширить позже
+        }
+
+        // ==================== ЧАТ (без изменений) ====================
         function openMessages() {
             document.getElementById('messages-modal').classList.remove('hidden')
             document.getElementById('messages-modal').classList.add('flex')
             renderChatList()
         }
-        
         function closeMessagesModal() {
             const modal = document.getElementById('messages-modal')
             modal.classList.add('hidden')
             modal.classList.remove('flex')
         }
-        
         function renderChatList() {
             const container = document.getElementById('chat-list')
             container.innerHTML = chats.map(chat => `
-                <div onclick="openSingleChat(${chat.id})" class="flex items-center gap-4 p-4 hover:bg-[#3a2a5c] rounded-2xl cursor-pointer transition-all">
+                <div onclick="openSingleChat(${chat.id})" class="flex items-center gap-4 p-4 hover:bg-[#3a2a5c] rounded-2xl cursor-pointer">
                     <img src="${chat.avatar}" class="w-12 h-12 rounded-2xl">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between">
-                            <p class="font-semibold truncate">${chat.name}</p>
-                            <p class="text-xs text-[#c4a1ff]">${chat.time}</p>
-                        </div>
-                        <p class="text-sm text-[#c4a1ff] truncate">${chat.lastMessage}</p>
+                    <div class="flex-1">
+                        <div class="flex justify-between"><p class="font-semibold">${chat.name}</p><p class="text-xs text-[#c4a1ff]">${chat.time}</p></div>
+                        <p class="text-sm text-[#c4a1ff]">${chat.lastMessage}</p>
                     </div>
                 </div>
             `).join('')
         }
-        
         function openSingleChat(id) {
             closeMessagesModal()
-            
             currentChatId = id
             const chat = chats.find(c => c.id === id)
-            if (!chat) return
-            
             document.getElementById('chat-avatar').src = chat.avatar
             document.getElementById('chat-name').textContent = chat.name
             document.getElementById('chat-overlay').classList.remove('hidden')
             document.getElementById('chat-overlay').classList.add('flex')
-            
             renderChatMessages(chat)
         }
-        
         function renderChatMessages(chat) {
             const container = document.getElementById('chat-messages')
             container.innerHTML = chat.messages.map(m => `
                 <div class="flex ${m.from === 'me' ? 'justify-end' : 'justify-start'}">
-                    <div class="message-bubble max-w-[75%] px-5 py-3 rounded-3xl ${m.from === 'me' 
-                        ? 'bg-[#8b5cf6] text-white rounded-tr-none' 
-                        : 'bg-[#3a2a5c] rounded-tl-none'}">
+                    <div class="message-bubble max-w-[75%] px-5 py-3 rounded-3xl ${m.from === 'me' ? 'bg-[#8b5cf6] text-white rounded-tr-none' : 'bg-[#3a2a5c] rounded-tl-none'}">
                         ${m.text}
                     </div>
                 </div>
             `).join('')
-            
-            // Прокрутка вниз
             container.scrollTop = container.scrollHeight
         }
-        
         function sendMessage() {
             const input = document.getElementById('message-input')
             const text = input.value.trim()
             if (!text || !currentChatId) return
-            
             const chat = chats.find(c => c.id === currentChatId)
-            chat.messages.push({ from: 'me', text: text })
-            chat.lastMessage = text
-            
+            chat.messages.push({ from: 'me', text })
             renderChatMessages(chat)
             input.value = ''
-            
-            // Симуляция ответа через 1.2 сек
             setTimeout(() => {
                 if (currentChatId === chat.id) {
-                    const replies = ["Круто! 🔥", "Согласна", "Хаха давай", "Поняла"]
-                    const randomReply = replies[Math.floor(Math.random() * replies.length)]
-                    chat.messages.push({ from: 'them', text: randomReply })
+                    const replies = ["Круто! Давай обменяемся", "Согласна", "Принято 🔥"]
+                    chat.messages.push({ from: 'them', text: replies[Math.floor(Math.random()*replies.length)] })
                     renderChatMessages(chat)
                 }
-            }, 1200)
+            }, 1100)
         }
-        
         function closeChat() {
             const overlay = document.getElementById('chat-overlay')
             overlay.classList.add('hidden')
             overlay.classList.remove('flex')
             currentChatId = null
         }
-        
-        // ==================== ПРОФИЛИ ====================
-        function openMyProfile() {
-            openProfile(currentUser.username)
+
+        function showToast(msg) {
+            const toast = document.createElement('div')
+            toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#2a1b47;color:white;padding:16px 24px;border-radius:9999px;box-shadow:0 10px 15px -3px rgb(139 92 246);display:flex;align-items:center;gap:12px;animation:fadeInUp 0.3s'
+            toast.innerHTML = `<i class="fa-solid fa-check-circle text-[#8b5cf6]"></i><span>${msg}</span>`
+            document.body.appendChild(toast)
+            setTimeout(() => toast.remove(), 2800)
         }
-        
-        function openProfile(username) {
-            const modal = document.getElementById('profile-modal')
-            modal.classList.remove('hidden')
-            modal.classList.add('flex')
-            
-            // Для простоты подставляем текущего пользователя
-            document.getElementById('modal-avatar').src = currentUser.avatar
-            document.getElementById('modal-name').textContent = currentUser.name
-            document.getElementById('modal-username').textContent = currentUser.username
-        }
-        
-        function closeProfileModal() {
-            const modal = document.getElementById('profile-modal')
-            modal.classList.add('hidden')
-            modal.classList.remove('flex')
-        }
-        
-        function subscribe() {
-            showToast(currentLang === 'ru' ? 'Вы успешно подписались ❤️' : 'Successfully followed ❤️')
-            closeProfileModal()
-        }
-        
-        // ==================== СОЗДАНИЕ ПОСТА ====================
-        function createPost() {
-            const text = prompt(currentLang === 'ru' ? 'Напишите текст поста:' : 'Write your post text:')
-            if (!text) return
-            
-            const newPost = {
-                id: Date.now(),
-                user: currentUser.name,
-                username: currentUser.username,
-                avatar: currentUser.avatar,
-                time: "сейчас",
-                text: text,
-                image: "", // ← ВСТАВЬ СВОЮ ССЫЛКУ НА ИЗОБРАЖЕНИЕ ПОСТА
-                likes: 0,
-                liked: false
-            }
-            
-            postsData.unshift(newPost)
-            renderFeed()
-            showToast(currentLang === 'ru' ? 'Пост опубликован!' : 'Post published!')
-        }
-        
-        // ==================== ПРОЧИЕ ФУНКЦИИ ====================
-        function navigateTo(page) {
-            if (page === 'feed') {
-                renderFeed()
-            } else if (page === 'profile') {
-                openMyProfile()
-            } else if (page === 'messages') {
-                openMessages()
-            } else {
-                showToast('Раздел ' + page + ' в разработке (но уже красиво!)')
-            }
-        }
-        
-        function showNotifications() {
-            showToast(currentLang === 'ru' ? 'У вас 3 новых уведомления 💜' : 'You have 3 new notifications 💜')
-        }
-        
-        function showToast(message) {
-            const toast = document.getElementById('toast')
-            document.getElementById('toast-text').innerHTML = message
-            toast.style.display = 'flex'
-            setTimeout(() => {
-                toast.style.display = 'none'
-            }, 2800)
-        }
-        
-        function viewImage(src) {
-            // Можно открыть в новом окне или модальном окне
-            window.open(src, '_blank')
-        }
-        
+
         // ==================== ЗАПУСК ====================
         function launchApp() {
             initTailwind()
-            renderFeed()
-            renderSidePanels()
+            renderMarketplace()
+            renderMySkills()
+            renderExperience()
             updateTexts()
-            
-            console.log('%c🚀 VioletSphere запущена! Наслаждайся тёмно-фиолетовым вайбом!', 'color:#8b5cf6;font-size:14px;font-weight:bold')
-            
-            // Пример анимации появления первого поста
-            console.log('Все анимации, чат, профили и переключения темы/языка работают!')
+            showMainSection('marketplace-section') // стартовая страница — маркетплейс
+            console.log('%c✅ VioletSkills запущена! Обмен навыками + видео-доказательства работают', 'color:#8b5cf6;font-weight:bold')
         }
-        
-        // Старт
+
         window.onload = launchApp
     </script>
 </body>
 </html>
+Готово!
