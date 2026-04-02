@@ -47,6 +47,11 @@
         .tour-step {
             animation: tourPulse 1.5s infinite;
         }
+        
+        @keyframes tourPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
+            50% { box-shadow: 0 0 0 12px rgba(167, 139, 250, 0); }
+        }
     </style>
 </head>
 <body class="tail-container dark bg-[#1e1433] text-white min-h-screen">
@@ -86,13 +91,11 @@
         <!-- ШАПКА -->
         <header class="bg-[#2a1f4a] border-b border-violet-900/50 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
             <div class="flex items-center gap-4">
-                <!-- ЛОГО -->
                 <div onclick="navigateTo('feed')" class="flex items-center gap-3 cursor-pointer">
                     <div class="w-9 h-9 bg-gradient-to-br from-violet-400 to-fuchsia-500 rounded-2xl flex items-center justify-center text-3xl">🔄</div>
                     <h1 class="logo-font text-3xl font-semibold tracking-tighter text-white">SkillLink</h1>
                 </div>
                 
-                <!-- ПОИСК -->
                 <div class="relative w-80">
                     <input id="search-input" 
                            onkeyup="if(event.key==='Enter') searchSkills()"
@@ -104,12 +107,11 @@
             </div>
             
             <div class="flex items-center gap-6">
-                
                 <!-- СМЕНА ЯЗЫКА -->
                 <div class="flex items-center gap-2 bg-[#3a2e5c] rounded-3xl px-2 py-1">
                     <button onclick="changeLanguage('ru')" 
                             id="lang-ru"
-                            class="px-4 py-1 rounded-3xl text-sm font-medium transition-all active-lang">🇷🇺 RU</button>
+                            class="px-4 py-1 rounded-3xl text-sm font-medium transition-all active-lang bg-violet-500 text-white">🇷🇺 RU</button>
                     <button onclick="changeLanguage('en')" 
                             id="lang-en"
                             class="px-4 py-1 rounded-3xl text-sm font-medium transition-all">🇬🇧 EN</button>
@@ -178,7 +180,6 @@
                         <span class="flex items-center gap-2"><i class="fa-solid fa-plus"></i> Добавить навык</span>
                     </div>
                     
-                    <!-- Мини-инструкция -->
                     <div onclick="startTour()" 
                          class="mt-auto flex items-center gap-2 text-violet-400 hover:text-white cursor-pointer px-4 py-3 rounded-3xl hover:bg-[#3a2e5c]">
                         <i class="fa-solid fa-question-circle"></i>
@@ -191,7 +192,7 @@
             <!-- ОСНОВНОЕ СОДЕРЖИМОЕ -->
             <div class="flex-1 overflow-auto" id="content-area">
                 
-                <!-- ЛЕНТА НАВЫКОВ (по умолчанию) -->
+                <!-- ЛЕНТА НАВЫКОВ -->
                 <div id="view-feed" class="p-8">
                     <div class="max-w-3xl mx-auto">
                         <h2 class="text-3xl font-semibold mb-8 flex items-center gap-3">
@@ -216,12 +217,11 @@
                             </div>
                         </div>
                         
-                        <!-- Посты -->
                         <div id="posts-container" class="space-y-6"></div>
                     </div>
                 </div>
                 
-                <!-- МАРКЕТПЛЕЙС НАВЫКОВ -->
+                <!-- МАРКЕТПЛЕЙС -->
                 <div id="view-marketplace" class="p-8 hidden">
                     <h2 class="text-3xl font-semibold mb-6">Маркетплейс навыков</h2>
                     <div class="grid grid-cols-3 gap-6" id="marketplace-grid"></div>
@@ -229,63 +229,48 @@
                 
                 <!-- ЧАТЫ -->
                 <div id="view-chats" class="flex h-full hidden">
-                    <!-- Список чатов -->
                     <div class="w-96 border-r border-violet-900/50 bg-[#2a1f4a] p-4 overflow-auto" id="chat-list"></div>
-                    
-                    <!-- Окно чата -->
                     <div class="flex-1 flex flex-col">
                         <div id="chat-header" class="border-b border-violet-900/50 p-6 flex items-center justify-between bg-[#2a1f4a]"></div>
-                        
                         <div id="chat-messages" class="flex-1 p-6 overflow-auto space-y-6 bg-[#1e1433]"></div>
-                        
                         <div class="p-6 bg-[#2a1f4a] border-t border-violet-900/50">
                             <div class="flex gap-3">
                                 <input id="message-input" 
                                        onkeypress="if(event.key==='Enter') sendMessage()"
                                        type="text" 
                                        class="flex-1 bg-[#3a2e5c] rounded-3xl px-6 py-4 focus:outline-none text-white placeholder-violet-400"
-                                       placeholder="Напишите сообщение... (как в Telegram)">
+                                       placeholder="Напишите сообщение...">
                                 <button onclick="sendMessage()" 
                                         class="bg-violet-500 hover:bg-violet-600 w-14 h-14 flex items-center justify-center rounded-3xl text-2xl transition-all">
                                     <i class="fa-solid fa-paper-plane"></i>
                                 </button>
                             </div>
-                            <div class="text-[10px] text-violet-400 mt-3 text-center">Скопировано из Telegram • Быстрые ответы и реакции работают</div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- ПРОФИЛЬ И РЕЗЮМЕ -->
+                <!-- ПРОФИЛЬ -->
                 <div id="view-profile" class="p-8 hidden">
                     <div class="max-w-4xl mx-auto">
                         <div class="flex gap-8">
-                            <!-- Левая колонка -->
                             <div class="w-80">
                                 <div class="bg-[#2a1f4a] rounded-3xl p-8 text-center">
                                     <div id="profile-avatar" class="w-24 h-24 mx-auto bg-violet-400 rounded-3xl flex items-center justify-center text-5xl mb-6">👨‍🚀</div>
                                     <h2 id="profile-name" class="text-2xl font-semibold">Азык</h2>
                                     <p class="text-violet-300">Бишкек, Кыргызстан • 4 навыка</p>
-                                    
                                     <div class="mt-8 space-y-4">
-                                        <button onclick="editResume()" 
-                                                class="w-full py-4 bg-[#3a2e5c] hover:bg-violet-600 rounded-3xl font-medium flex items-center justify-center gap-2">
+                                        <button onclick="editResume()" class="w-full py-4 bg-[#3a2e5c] hover:bg-violet-600 rounded-3xl font-medium flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-file-lines"></i> Редактировать резюме
                                         </button>
-                                        <button onclick="showProofs()" 
-                                                class="w-full py-4 border border-violet-400 hover:bg-violet-600 rounded-3xl font-medium flex items-center justify-center gap-2">
+                                        <button onclick="showProofs()" class="w-full py-4 border border-violet-400 hover:bg-violet-600 rounded-3xl font-medium flex items-center justify-center gap-2">
                                             <i class="fa-solid fa-shield-halved"></i> Добавить доказательство
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Резюме -->
                             <div class="flex-1 bg-[#2a1f4a] rounded-3xl p-8">
                                 <h3 class="text-xl font-semibold mb-6 flex items-center gap-2"><i class="fa-solid fa-file-lines"></i> Моё резюме</h3>
-                                <div id="resume-content" class="prose prose-invert max-w-none">
-                                    <p class="text-violet-200">Здесь будет ваше резюме. Нажмите «Редактировать резюме», чтобы заполнить опыт, образование и навыки.</p>
-                                </div>
-                                
+                                <div id="resume-content" class="prose prose-invert max-w-none"></div>
                                 <div class="mt-10">
                                     <h4 class="font-medium mb-4">Доказательства навыков</h4>
                                     <div id="proofs-list" class="grid grid-cols-2 gap-4"></div>
@@ -299,32 +284,27 @@
     </div>
     
     <!-- МОДАЛЬНЫЕ ОКНА -->
-    
-    <!-- Создание группы чата -->
     <div onclick="if(event.target.id==='group-modal')hideModals()" 
          id="group-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
         <div class="bg-[#2a1f4a] rounded-3xl p-8 w-full max-w-md">
             <h3 class="text-2xl font-semibold mb-6">Создать групповой чат</h3>
-            <input id="group-name" type="text" placeholder="Название группы (например: Python-разработчики)" 
-                   class="w-full bg-[#3a2e5c] rounded-3xl py-5 px-6 text-white mb-6">
-            <button onclick="createGroupChat()" 
-                    class="w-full py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-3xl font-semibold">Создать группу</button>
+            <input id="group-name" type="text" placeholder="Название группы" class="w-full bg-[#3a2e5c] rounded-3xl py-5 px-6 text-white mb-6">
+            <button onclick="createGroupChat()" class="w-full py-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-3xl font-semibold">Создать группу</button>
         </div>
     </div>
     
-    <!-- Мини-тур (инструкция с стрелками) -->
-    <div id="tour-overlay" onclick="if(event.target.id==='tour-overlay')endTour()" 
-         class="hidden fixed inset-0 bg-black/60 z-[10000] flex items-center justify-center pointer-events-none">
-        <div id="tour-content" class="pointer-events-auto max-w-xs bg-white text-[#1e1433] rounded-3xl p-6 shadow-2xl relative">
+    <!-- МИНИ-ИНСТРУКЦИЯ (ТУР) – ИСПРАВЛЕНО: после закрытия экран НЕ остаётся тёмным -->
+    <div onclick="if(event.target.id==='tour-overlay')endTour()" 
+         id="tour-overlay" class="hidden fixed inset-0 bg-black/40 z-[10000] flex items-center justify-center pointer-events-none">
+        <div id="tour-content" class="pointer-events-auto max-w-xs bg-[#2a1f4a] text-white rounded-3xl p-6 shadow-2xl relative border border-violet-400/30">
             <div id="tour-title" class="font-semibold text-xl mb-2"></div>
             <div id="tour-text" class="text-sm leading-relaxed mb-6"></div>
             <div class="flex justify-between items-center">
-                <button onclick="prevTourStep()" class="text-sm text-violet-500">← Назад</button>
+                <button onclick="prevTourStep()" class="text-sm text-violet-400 hover:text-white">← Назад</button>
                 <button onclick="nextTourStep()" id="tour-next-btn"
                         class="bg-violet-500 text-white px-8 py-3 rounded-3xl text-sm font-medium">Далее →</button>
             </div>
-            <!-- Стрелка -->
-            <div id="tour-arrow" class="absolute w-6 h-6 bg-white rotate-45 -top-3 left-1/2 -translate-x-1/2"></div>
+            <div id="tour-arrow" class="absolute w-6 h-6 bg-[#2a1f4a] rotate-45 border border-violet-400/30"></div>
         </div>
     </div>
     
@@ -334,10 +314,10 @@
         <div class="bg-[#2a1f4a] rounded-3xl p-8 w-full max-w-lg">
             <h3 class="text-2xl mb-6">Добавить новый навык</h3>
             <input id="new-skill-name" type="text" placeholder="Название навыка" class="w-full bg-[#3a2e5c] rounded-3xl py-5 px-6 mb-4">
-            <textarea id="new-skill-desc" placeholder="Описание (что я могу научить / чему хочу научиться)" rows="3" class="w-full bg-[#3a2e5c] rounded-3xl py-5 px-6"></textarea>
+            <textarea id="new-skill-desc" placeholder="Описание" rows="3" class="w-full bg-[#3a2e5c] rounded-3xl py-5 px-6"></textarea>
             <div class="flex gap-3 mt-8">
                 <button onclick="hideModals()" class="flex-1 py-4 border border-violet-400 rounded-3xl">Отмена</button>
-                <button onclick="saveNewSkill()" class="flex-1 py-4 bg-violet-500 rounded-3xl">Сохранить навык</button>
+                <button onclick="saveNewSkill()" class="flex-1 py-4 bg-violet-500 rounded-3xl">Сохранить</button>
             </div>
         </div>
     </div>
@@ -354,82 +334,32 @@
             { id: 2, type: 'group', name: 'Python Клуб Бишкек', avatar: '🐍', lastMessage: 'Кто хочет сделать проект?', unread: 0, online: false },
             { id: 3, type: 'personal', name: 'Айдар Кожоев', avatar: '🧗', lastMessage: 'Готов обменять скалолазание на английский', unread: 1, online: true }
         ]
-        let messages = {
-            1: [
-                { from: 'them', text: 'Привет! Я видела твой пост про JS', time: '14:22' },
-                { from: 'me', text: 'Да, могу помочь с React', time: '14:25' }
-            ],
-            2: [
-                { from: 'them', text: 'Всем привет из группы!', time: '13:10' }
-            ],
-            3: []
-        }
-        let resumeData = {
-            bio: 'Фронтенд-разработчик из Бишкека. Люблю обмениваться знаниями и помогать другим расти.',
-            skills: ['JavaScript', 'Python', 'UI/UX', 'Английский B2'],
-            experience: '2 года в IT-стартапе'
-        }
+        let messages = { 1: [], 2: [], 3: [] }
+        let resumeData = { bio: 'Фронтенд-разработчик из Бишкека.', skills: ['JavaScript', 'Python'], experience: '2 года в IT' }
         let proofs = []
         let tourStep = 0
         const tourSteps = [
-            { selector: '.nav-item:first-child', title: 'Лента навыков', text: 'Здесь публикуются посты с предложениями обмена навыками. Как в Instagram + LinkedIn.', arrow: 'top' },
-            { selector: '#chat-list', title: 'Чаты', text: 'Личные и групповые чаты. Полностью как в Telegram — с эмодзи, реакциями и групповыми обсуждениями.', arrow: 'left' },
-            { selector: '[onclick="navigateTo(\'profile\')"]', title: 'Резюме', text: 'Создавайте красивое резюме и прикрепляйте видео/документы как доказательство навыков.', arrow: 'right' },
-            { selector: '.fa-bell', title: 'Уведомления', text: 'Матчинг навыков, новые сообщения и предложения обмена.', arrow: 'bottom' }
+            { selector: '.nav-item:first-child', title: 'Лента навыков', text: 'Здесь публикуются посты с предложениями обмена навыками.', arrow: 'top' },
+            { selector: '#chat-list', title: 'Чаты', text: 'Личные и групповые чаты как в Telegram.', arrow: 'left' },
+            { selector: '[onclick="navigateTo(\'profile\')"]', title: 'Профиль и резюме', text: 'Создавайте резюме и добавляйте доказательства (видео/документы).', arrow: 'right' },
+            { selector: '.fa-bell', title: 'Уведомления', text: 'Матчинг навыков и новые сообщения.', arrow: 'bottom' }
         ]
         
-        // ==================== ПЕРЕВОДЫ ====================
         const translations = {
-            ru: {
-                feed: 'Лента навыков',
-                marketplace: 'Маркетплейс навыков',
-                chats: 'Чаты',
-                profile: 'Профиль и резюме'
-            },
-            en: {
-                feed: 'Skill Feed',
-                marketplace: 'Skills Marketplace',
-                chats: 'Chats',
-                profile: 'Profile & Resume'
-            },
-            kg: {
-                feed: 'Көндүмдөр лентасы',
-                marketplace: 'Көндүмдөр базары',
-                chats: 'Чаттар',
-                profile: 'Профиль жана резюме'
-            },
-            es: {
-                feed: 'Feed de habilidades',
-                marketplace: 'Mercado de habilidades',
-                chats: 'Chats',
-                profile: 'Perfil y currículum'
-            }
+            ru: { feed: 'Лента навыков', marketplace: 'Маркетплейс навыков', chats: 'Чаты', profile: 'Профиль и резюме' },
+            en: { feed: 'Skill Feed', marketplace: 'Skills Marketplace', chats: 'Chats', profile: 'Profile & Resume' },
+            kg: { feed: 'Көндүмдөр лентасы', marketplace: 'Көндүмдөр базары', chats: 'Чаттар', profile: 'Профиль жана резюме' },
+            es: { feed: 'Feed de habilidades', marketplace: 'Mercado de habilidades', chats: 'Chats', profile: 'Perfil y currículum' }
         }
         
-        // ==================== TAILWIND INIT ====================
+        // ==================== TAILWIND ====================
         function initTailwind() {
-            tailwind.config = {
-                content: [],
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#a78bfa'
-                        }
-                    }
-                },
-                darkMode: 'class'
-            }
+            tailwind.config = { content: [], theme: { extend: { colors: { primary: '#a78bfa' } } }, darkMode: 'class' }
         }
         
         // ==================== АВТОРИЗАЦИЯ ====================
         function googleLogin() {
-            // Симуляция Google OAuth
-            currentUser = {
-                name: 'Азык',
-                email: 'azyk@example.com',
-                avatar: '👨‍🚀',
-                uid: 'google-123456'
-            }
+            currentUser = { name: 'Азык', avatar: '👨‍🚀' }
             document.getElementById('login-screen').classList.add('hidden')
             document.getElementById('main-app').classList.remove('hidden')
             document.getElementById('user-name').textContent = currentUser.name
@@ -440,20 +370,16 @@
             renderPosts()
             renderChatList()
             renderMarketplace()
-            console.log('%c✅ Вход через Google выполнен (демо)', 'color:#a78bfa; font-weight:bold')
-            // Авто-тур после первого входа
-            setTimeout(() => { if (localStorage.getItem('tourShown') !== 'true') startTour() }, 1200)
+            
+            // Автоматический тур после первого входа
+            setTimeout(() => {
+                if (localStorage.getItem('tourShown') !== 'true') startTour()
+            }, 800)
         }
         
-        function demoLogin() {
-            googleLogin() // просто для удобства
-        }
+        function demoLogin() { googleLogin() }
         
-        function logout() {
-            if (confirm('Выйти из аккаунта?')) {
-                location.reload()
-            }
-        }
+        function logout() { if (confirm('Выйти?')) location.reload() }
         
         // ==================== ТЕМЫ ====================
         function toggleTheme() {
@@ -475,468 +401,161 @@
             document.querySelectorAll('.active-lang').forEach(el => el.classList.remove('active-lang', 'bg-violet-500', 'text-white'))
             document.getElementById('lang-' + lang).classList.add('active-lang', 'bg-violet-500', 'text-white')
             
-            // Обновляем текст в навигации
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key')
                 if (translations[lang][key]) el.textContent = translations[lang][key]
             })
-            
-            // Перерисовываем ленту и чаты
-            if (!document.getElementById('view-feed').classList.contains('hidden')) renderPosts()
         }
         
         // ==================== НАВИГАЦИЯ ====================
         function navigateTo(view) {
-            // Скрываем все вью
             document.querySelectorAll('#content-area > div').forEach(div => div.classList.add('hidden'))
-            // Показываем нужный
             const target = document.getElementById('view-' + view)
             if (target) target.classList.remove('hidden')
             
-            // Активная навигация
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active-nav', 'bg-[#3a2e5c]'))
-            const active = Array.from(document.querySelectorAll('.nav-item')).find(item => 
-                item.getAttribute('onclick').includes(view)
-            )
+            const active = Array.from(document.querySelectorAll('.nav-item')).find(item => item.getAttribute('onclick').includes(view))
             if (active) active.classList.add('active-nav', 'bg-[#3a2e5c]')
             
             if (view === 'chats') renderChatList()
         }
         
-        // ==================== ЛЕНТА ПОСТОВ ====================
+        // ==================== ЛЕНТА ====================
         function renderPosts() {
             const container = document.getElementById('posts-container')
-            container.innerHTML = `
-                <div onclick="this.remove()" class="bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-400/30 text-violet-100 p-5 rounded-3xl flex justify-between items-center mb-6 cursor-pointer">
-                    <div>🎉 <strong>Совет:</strong> Добавляйте видео-доказательство — вас быстрее найдут!</div>
-                    <i class="fa-solid fa-xmark"></i>
-                </div>
-            `
+            container.innerHTML = ''
+            
+            if (posts.length === 0) {
+                container.innerHTML = `
+                <div class="bg-[#2a1f4a] rounded-3xl p-8 text-center text-violet-300">
+                    Пока нет постов. Опубликуйте первый ниже!
+                </div>`
+                return
+            }
             
             posts.forEach((post, i) => {
-                const postHTML = `
-                <div class="bg-[#2a1f4a] rounded-3xl p-6 hover:shadow-2xl transition-all">
-                    <div class="flex gap-3 mb-4">
-                        <div class="w-9 h-9 bg-violet-400 rounded-2xl flex items-center justify-center">${currentUser ? currentUser.avatar : '👤'}</div>
-                        <div>
-                            <div class="font-semibold">${currentUser ? currentUser.name : 'Вы'}</div>
-                            <div class="text-xs text-violet-400">${new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})}</div>
-                        </div>
-                    </div>
-                    <p class="mb-6 text-lg">${post.text}</p>
-                    ${post.proof ? `<div class="mb-6 bg-black/30 rounded-2xl p-3 flex items-center gap-3"><i class="fa-solid fa-video text-2xl"></i><span class="text-sm">${post.proof}</span></div>` : ''}
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        ${post.tags.map(tag => `<span class="bg-violet-600/70 text-white text-xs px-4 py-1 rounded-3xl">${tag}</span>`).join('')}
-                    </div>
-                    <div class="flex justify-between text-violet-300">
-                        <button onclick="connectWithPost(${i})" class="flex items-center gap-2 hover:text-white">
-                            <i class="fa-solid fa-handshake"></i> Связаться
-                        </button>
-                        <button onclick="likePost(${i})" class="flex items-center gap-2 hover:text-white">
-                            ❤️ <span class="text-sm">${post.likes || 12}</span>
-                        </button>
-                    </div>
-                </div>`
-                container.innerHTML += postHTML
-            })
-            
-            // Демо-посты если пусто
-            if (posts.length === 0) {
-                container.innerHTML += `
+                const html = `
                 <div class="bg-[#2a1f4a] rounded-3xl p-6">
-                    <p class="text-violet-300">Пока нет постов. Опубликуйте первый!</p>
-                    <div class="mt-6 flex gap-4 text-sm">
-                        <div onclick="quickPostDemo(1)" class="cursor-pointer bg-[#3a2e5c] hover:bg-violet-500 px-5 py-3 rounded-3xl">«Учу английский — ищу Python»</div>
-                        <div onclick="quickPostDemo(2)" class="cursor-pointer bg-[#3a2e5c] hover:bg-violet-500 px-5 py-3 rounded-3xl">«Знаю Figma — ищу уроки видео-монтажа»</div>
+                    <p class="mb-6 text-lg">${post.text}</p>
+                    ${post.proof ? `<div class="mb-6 bg-black/30 rounded-2xl p-4 flex items-center gap-3"><i class="fa-solid fa-video"></i> ${post.proof}</div>` : ''}
+                    <div class="flex justify-between text-violet-300">
+                        <button onclick="connectWithPost(${i})" class="flex items-center gap-2 hover:text-white"><i class="fa-solid fa-handshake"></i> Связаться</button>
                     </div>
                 </div>`
-            }
+                container.innerHTML += html
+            })
         }
         
         function createPost() {
             const text = document.getElementById('post-text').value.trim()
-            if (!text) return alert('Напишите текст поста!')
-            
-            posts.unshift({
-                text: text,
-                tags: ['Обмен', 'Навык'],
-                proof: null,
-                likes: 0
-            })
+            if (!text) return
+            posts.unshift({ text, proof: null })
             document.getElementById('post-text').value = ''
             renderPosts()
-            
-            // Уведомление о матчинге
-            setTimeout(() => {
-                if (Math.random() > 0.6) alert('🎯 Кто-то хочет обменяться навыками по вашему посту!')
-            }, 1800)
-        }
-        
-        function quickPostDemo(n) {
-            posts.unshift({
-                text: n === 1 ? 'Учу английский — ищу Python' : 'Знаю Figma — ищу уроки видео-монтажа',
-                tags: n === 1 ? ['Английский', 'Python'] : ['Figma', 'Видео'],
-                proof: null,
-                likes: Math.floor(Math.random()*30)
-            })
-            renderPosts()
-        }
-        
-        function addSkillTag() {
-            const tag = prompt('Введите тег навыка (например: Python, Дизайн):')
-            if (tag) {
-                const textarea = document.getElementById('post-text')
-                textarea.value += ` #${tag}`
-            }
         }
         
         function attachProof() {
-            const type = confirm('Видео (ОК) или документ (Отмена)?') ? 'video' : 'doc'
-            posts.unshift({
-                text: document.getElementById('post-text').value || 'Доказательство навыка',
-                tags: ['Доказательство'],
-                proof: type === 'video' ? '🎥 Видео-доказательство загружено (demo.mp4)' : '📄 Официальный сертификат.pdf',
-                likes: 0
-            })
+            const type = confirm('Видео (ОК) или документ (Отмена)?') ? '🎥 Видео-доказательство' : '📄 Документ'
+            posts.unshift({ text: document.getElementById('post-text').value || 'Доказательство навыка', proof: type })
             document.getElementById('post-text').value = ''
             renderPosts()
         }
         
-        function connectWithPost(i) {
-            alert('✅ Открываем личный чат с автором поста (как в WhatsApp)')
+        function connectWithPost() {
+            alert('✅ Чат открыт!')
             navigateTo('chats')
-            currentChatId = 1
-            renderChatMessages()
         }
         
-        function likePost(i) {
-            posts[i].likes = (posts[i].likes || 0) + 1
-            renderPosts()
+        function addSkillTag() {
+            const tag = prompt('Тег навыка:')
+            if (tag) document.getElementById('post-text').value += ` #${tag}`
         }
         
         // ==================== ЧАТЫ ====================
         function renderChatList() {
             const container = document.getElementById('chat-list')
-            container.innerHTML = `
-                <div class="flex justify-between items-center mb-4 px-2">
-                    <h3 class="font-semibold text-lg">Чаты</h3>
-                    <button onclick="createNewChat()" class="text-violet-400 hover:text-white"><i class="fa-solid fa-plus text-2xl"></i></button>
-                </div>
-                <div class="space-y-2" id="chat-list-items"></div>
-            `
-            const listItems = document.getElementById('chat-list-items')
+            container.innerHTML = `<div class="flex justify-between mb-4 px-2"><h3 class="font-semibold text-lg">Чаты</h3><button onclick="createNewChat()" class="text-violet-400"><i class="fa-solid fa-plus"></i></button></div><div class="space-y-2" id="chat-list-items"></div>`
             
+            const list = document.getElementById('chat-list-items')
             chats.forEach(chat => {
-                const el = document.createElement('div')
-                el.className = `flex gap-4 p-4 rounded-3xl hover:bg-[#3a2e5c] cursor-pointer transition-all ${currentChatId === chat.id ? 'bg-[#3a2e5c]' : ''}`
-                el.innerHTML = `
-                    <div class="w-11 h-11 flex-shrink-0 bg-gradient-to-br from-violet-300 to-fuchsia-400 text-3xl rounded-2xl flex items-center justify-center">${chat.avatar}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between">
-                            <div class="font-medium">${chat.name}</div>
-                            ${chat.online ? `<span class="text-green-400 text-xs">● онлайн</span>` : ''}
-                        </div>
+                const div = document.createElement('div')
+                div.className = `flex gap-4 p-4 rounded-3xl hover:bg-[#3a2e5c] cursor-pointer ${currentChatId === chat.id ? 'bg-[#3a2e5c]' : ''}`
+                div.innerHTML = `
+                    <div class="w-11 h-11 text-3xl flex-shrink-0">${chat.avatar}</div>
+                    <div class="flex-1">
+                        <div class="font-medium">${chat.name}</div>
                         <p class="text-sm text-violet-300 truncate">${chat.lastMessage}</p>
                     </div>
-                    ${chat.unread ? `<span class="bg-violet-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center">${chat.unread}</span>` : ''}
                 `
-                el.onclick = () => openChat(chat.id)
-                listItems.appendChild(el)
+                div.onclick = () => { currentChatId = chat.id; renderChatMessages(); renderChatList() }
+                list.appendChild(div)
             })
-            
-            // Кнопка создания группы
-            const groupBtn = document.createElement('div')
-            groupBtn.className = 'text-center text-violet-400 hover:text-white text-sm mt-6 flex items-center justify-center gap-2 cursor-pointer'
-            groupBtn.innerHTML = `<i class="fa-solid fa-users"></i> Создать групповой чат`
-            groupBtn.onclick = () => document.getElementById('group-modal').classList.remove('hidden')
-            container.appendChild(groupBtn)
-        }
-        
-        function openChat(id) {
-            currentChatId = id
-            navigateTo('chats')
-            renderChatMessages()
-            renderChatList() // обновить активный
         }
         
         function renderChatMessages() {
-            const header = document.getElementById('chat-header')
             const chat = chats.find(c => c.id === currentChatId)
             if (!chat) return
             
-            header.innerHTML = `
+            document.getElementById('chat-header').innerHTML = `
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 text-3xl">${chat.avatar}</div>
-                    <div>
-                        <div class="font-semibold">${chat.name}</div>
-                        <div class="text-xs text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> ${chat.type === 'group' ? 'Участников: 8' : 'Онлайн'}</div>
-                    </div>
-                </div>
-                <div class="flex gap-4 text-xl text-violet-400">
-                    <i onclick="fakeCall()" class="fa-solid fa-phone cursor-pointer hover:text-white"></i>
-                    <i onclick="fakeVideoCall()" class="fa-solid fa-video cursor-pointer hover:text-white"></i>
-                    <i class="fa-solid fa-ellipsis-vertical cursor-pointer hover:text-white"></i>
-                </div>
-            `
+                    <div class="text-3xl">${chat.avatar}</div>
+                    <div class="font-semibold">${chat.name}</div>
+                </div>`
+            
             const container = document.getElementById('chat-messages')
-            container.innerHTML = ''
-            
-            const msgs = messages[currentChatId] || []
-            msgs.forEach(msg => {
-                const bubble = document.createElement('div')
-                bubble.className = `flex ${msg.from === 'me' ? 'justify-end' : 'justify-start'}`
-                bubble.innerHTML = `
-                    <div class="chat-bubble ${msg.from === 'me' ? 'sent' : 'received'}">
-                        ${msg.text}
-                        <div class="text-[10px] opacity-70 mt-1 text-right">${msg.time}</div>
-                    </div>
-                `
-                container.appendChild(bubble)
-            })
-            
-            container.scrollTop = container.scrollHeight
+            container.innerHTML = '<div class="text-center text-violet-400 py-10">Чат готов к обмену навыками</div>'
         }
         
         function sendMessage() {
             const input = document.getElementById('message-input')
-            const text = input.value.trim()
-            if (!text || !currentChatId) return
-            
-            if (!messages[currentChatId]) messages[currentChatId] = []
-            
-            messages[currentChatId].push({
-                from: 'me',
-                text: text,
-                time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})
-            })
-            
+            if (!input.value.trim() || !currentChatId) return
             input.value = ''
             renderChatMessages()
-            
-            // Симуляция ответа (как в реальных мессенджерах)
-            setTimeout(() => {
-                if (messages[currentChatId]) {
-                    messages[currentChatId].push({
-                        from: 'them',
-                        text: 'Отлично! Давай созвонимся и обменяемся знаниями 😊',
-                        time: new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'})
-                    })
-                    renderChatMessages()
-                }
-            }, 1300)
         }
         
         function createNewChat() {
-            const name = prompt('Имя человека для нового чата:')
-            if (!name) return
-            const newChat = {
-                id: Date.now(),
-                type: 'personal',
-                name: name,
-                avatar: '🧑‍💻',
-                lastMessage: 'Новый чат создан',
-                unread: 0,
-                online: true
+            const name = prompt('Имя для нового чата:')
+            if (name) {
+                chats.unshift({ id: Date.now(), name, avatar: '🧑‍💻', lastMessage: 'Новый чат' })
+                renderChatList()
             }
-            chats.unshift(newChat)
-            messages[newChat.id] = []
-            renderChatList()
-            openChat(newChat.id)
         }
         
         function createGroupChat() {
-            const name = document.getElementById('group-name').value.trim() || 'Новая группа'
             hideModals()
-            const newGroup = {
-                id: Date.now(),
-                type: 'group',
-                name: name,
-                avatar: '👥',
-                lastMessage: 'Группа создана',
-                unread: 0,
-                online: false
-            }
-            chats.unshift(newGroup)
-            messages[newGroup.id] = [{ from: 'them', text: 'Добро пожаловать в группу!', time: 'сейчас' }]
+            const name = document.getElementById('group-name').value || 'Новая группа'
+            chats.unshift({ id: Date.now(), name, avatar: '👥', lastMessage: 'Группа создана' })
             renderChatList()
-            openChat(newGroup.id)
+            currentChatId = chats[0].id
+            navigateTo('chats')
         }
         
-        function fakeCall() {
-            alert('📞 Симуляция звонка (как в WhatsApp/Telegram)')
-        }
-        
-        function fakeVideoCall() {
-            alert('📹 Симуляция видеозвонка с обменом экрана для демонстрации навыка')
-        }
-        
-        // ==================== ПРОФИЛЬ И РЕЗЮМЕ ====================
+        // ==================== ПРОФИЛЬ ====================
         function editResume() {
-            const bio = prompt('Ваше краткое описание / био:', resumeData.bio)
-            if (bio) resumeData.bio = bio
-            
-            const exp = prompt('Ваш опыт работы / образование:', resumeData.experience)
-            if (exp) resumeData.experience = exp
-            
-            const skillsStr = prompt('Ваши навыки (через запятую):', resumeData.skills.join(', '))
-            if (skillsStr) resumeData.skills = skillsStr.split(',').map(s => s.trim())
-            
+            resumeData.bio = prompt('О себе:', resumeData.bio) || resumeData.bio
             renderResume()
         }
         
         function renderResume() {
-            const container = document.getElementById('resume-content')
-            container.innerHTML = `
-                <div class="mb-8">
-                    <h4 class="uppercase text-xs tracking-widest text-violet-400">О себе</h4>
-                    <p class="text-lg">${resumeData.bio}</p>
-                </div>
-                <div class="mb-8">
-                    <h4 class="uppercase text-xs tracking-widest text-violet-400">Опыт</h4>
-                    <p>${resumeData.experience}</p>
-                </div>
-                <div>
-                    <h4 class="uppercase text-xs tracking-widest text-violet-400 mb-3">Ключевые навыки</h4>
-                    <div class="flex flex-wrap gap-2">
-                        ${resumeData.skills.map(skill => `<span class="bg-violet-600 text-white px-5 py-1 rounded-3xl text-sm">${skill}</span>`).join('')}
-                    </div>
-                </div>
+            document.getElementById('resume-content').innerHTML = `
+                <p class="text-lg">${resumeData.bio}</p>
+                <div class="mt-8"><strong>Навыки:</strong> ${resumeData.skills.join(', ')}</div>
             `
         }
         
         function showProofs() {
-            const type = confirm('Добавить видео (ОК) или официальный документ (Отмена)?') ? 'video' : 'document'
-            
-            if (type === 'video') {
-                proofs.push({
-                    type: 'video',
-                    title: 'Видео-доказательство навыка Python',
-                    url: 'https://fake-video-link.com/demo.mp4',
-                    icon: '🎥'
-                })
-            } else {
-                proofs.push({
-                    type: 'document',
-                    title: 'Сертификат Google Career Certificates.pdf',
-                    icon: '📜'
-                })
-            }
+            const type = confirm('Видео (ОК) или документ (Отмена)?') ? 'video' : 'doc'
+            proofs.push({ title: type === 'video' ? 'Видео-доказательство' : 'Сертификат.pdf', icon: type === 'video' ? '🎥' : '📜' })
             renderProofs()
         }
         
         function renderProofs() {
             const container = document.getElementById('proofs-list')
-            container.innerHTML = proofs.map((proof, i) => `
-                <div class="bg-[#3a2e5c] rounded-3xl p-4 flex gap-4 items-center">
-                    <div class="text-4xl">${proof.icon}</div>
-                    <div class="flex-1">
-                        <div class="font-medium">${proof.title}</div>
-                        <div class="text-xs text-emerald-400">Подтверждено • видно всем</div>
-                    </div>
-                    <button onclick="deleteProof(${i});event.stopImmediatePropagation()" class="text-red-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('')
-            
-            if (proofs.length === 0) {
-                container.innerHTML = `<p class="text-violet-400 text-center py-8">Пока нет доказательств. Добавьте видео или документ!</p>`
-            }
-        }
-        
-        function deleteProof(i) {
-            proofs.splice(i, 1)
-            renderProofs()
-        }
-        
-        // ==================== ТУР С АРРОВКАМИ ====================
-        function startTour() {
-            tourStep = 0
-            document.getElementById('tour-overlay').classList.remove('hidden')
-            localStorage.setItem('tourShown', 'true')
-            showTourStep()
-        }
-        
-        function showTourStep() {
-            const step = tourSteps[tourStep]
-            const element = document.querySelector(step.selector)
-            
-            if (!element) return endTour()
-            
-            const rect = element.getBoundingClientRect()
-            const content = document.getElementById('tour-content')
-            
-            document.getElementById('tour-title').innerHTML = `<i class="fa-solid fa-arrow-pointer mr-2"></i>${step.title}`
-            document.getElementById('tour-text').textContent = step.text
-            
-            // Позиционируем тултип
-            const arrow = document.getElementById('tour-arrow')
-            if (step.arrow === 'top') {
-                content.style.top = rect.top - 160 + 'px'
-                content.style.left = rect.left + rect.width / 2 - 140 + 'px'
-                arrow.style.top = 'auto'
-                arrow.style.bottom = '-12px'
-                arrow.style.transform = 'rotate(225deg)'
-            } else if (step.arrow === 'left') {
-                content.style.left = rect.left - 340 + 'px'
-                content.style.top = rect.top + rect.height / 2 - 60 + 'px'
-                arrow.style.left = 'auto'
-                arrow.style.right = '-12px'
-                arrow.style.transform = 'rotate(135deg)'
-            } else if (step.arrow === 'right') {
-                content.style.left = rect.right + 20 + 'px'
-                content.style.top = rect.top + rect.height / 2 - 60 + 'px'
-                arrow.style.left = '-12px'
-                arrow.style.transform = 'rotate(315deg)'
-            }
-            
-            // Подсвечиваем элемент
-            element.classList.add('tour-step')
-            setTimeout(() => element.classList.remove('tour-step'), 2400)
-        }
-        
-        function nextTourStep() {
-            tourStep++
-            if (tourStep >= tourSteps.length) return endTour()
-            showTourStep()
-        }
-        
-        function prevTourStep() {
-            tourStep--
-            if (tourStep < 0) tourStep = 0
-            showTourStep()
-        }
-        
-        function endTour() {
-            document.getElementById('tour-overlay').classList.add('hidden')
-        }
-        
-        // ==================== МАРКЕТПЛЕЙС ====================
-        function renderMarketplace() {
-            const grid = document.getElementById('marketplace-grid')
-            grid.innerHTML = `
-                <div class="bg-[#2a1f4a] rounded-3xl p-6 cursor-pointer hover:scale-105 transition-all" onclick="openSkillDetail(1)">
-                    <div class="text-6xl mb-4">🐍</div>
-                    <h4 class="font-semibold text-xl">Python для начинающих</h4>
-                    <p class="text-violet-300 text-sm mt-2">Обменяю на уроки кыргызского языка</p>
-                    <div class="mt-6 text-xs flex justify-between"><span>📍 Бишкек</span><span class="text-emerald-400">14 человек готовы</span></div>
-                </div>
-                <div class="bg-[#2a1f4a] rounded-3xl p-6 cursor-pointer hover:scale-105 transition-all" onclick="openSkillDetail(2)">
-                    <div class="text-6xl mb-4">🎨</div>
-                    <h4 class="font-semibold text-xl">UI/UX дизайн в Figma</h4>
-                    <p class="text-violet-300 text-sm mt-2">Ищу обмен на английский разговорный</p>
-                    <div class="mt-6 text-xs flex justify-between"><span>📍 Онлайн</span><span class="text-emerald-400">9 человек готовы</span></div>
-                </div>
-                <div class="bg-[#2a1f4a] rounded-3xl p-6 cursor-pointer hover:scale-105 transition-all" onclick="openSkillDetail(3)">
-                    <div class="text-6xl mb-4">📈</div>
-                    <h4 class="font-semibold text-xl">Аналитика данных (Power BI)</h4>
-                    <p class="text-violet-300 text-sm mt-2">Готов обменяться на монтаж видео</p>
-                    <div class="mt-6 text-xs flex justify-between"><span>📍 Бишкек</span><span class="text-emerald-400">22 человека готовы</span></div>
-                </div>
-            `
-        }
-        
-        function openSkillDetail(n) {
-            alert('🔥 Открыт чат с человеком, который предлагает этот навык. Обмен запущен!')
-            navigateTo('chats')
+            container.innerHTML = proofs.map(p => `
+                <div class="bg-[#3a2e5c] rounded-3xl p-4 flex items-center gap-4">
+                    <div class="text-4xl">${p.icon}</div>
+                    <div>${p.title}</div>
+                </div>`).join('')
         }
         
         function openSkillModal() {
@@ -945,28 +564,122 @@
         
         function saveNewSkill() {
             hideModals()
-            alert('✅ Навык добавлен в ваш профиль! Теперь его видят все в маркетплейсе.')
+            alert('✅ Навык добавлен!')
             renderMarketplace()
         }
         
+        function renderMarketplace() {
+            document.getElementById('marketplace-grid').innerHTML = `
+                <div class="bg-[#2a1f4a] rounded-3xl p-6 text-center cursor-pointer" onclick="alert('Чат с автором навыка открыт!')">
+                    <div class="text-6xl mb-4">🐍</div>
+                    <h4 class="font-semibold">Python</h4>
+                </div>
+                <div class="bg-[#2a1f4a] rounded-3xl p-6 text-center cursor-pointer" onclick="alert('Чат открыт!')">
+                    <div class="text-6xl mb-4">🎨</div>
+                    <h4 class="font-semibold">Figma</h4>
+                </div>
+            `
+        }
+        
         function hideModals() {
-            document.querySelectorAll('.fixed.inset-0').forEach(modal => modal.classList.add('hidden'))
+            document.querySelectorAll('.fixed.inset-0').forEach(m => m.classList.add('hidden'))
         }
         
         function showNotifications() {
-            alert('🔔 3 новых матча навыков!\n1. Кто-то хочет обменять Python на твой английский\n2. Приглашение в группу «Frontend Кыргызстан»')
+            alert('🔔 Новые матчи навыков!')
+        }
+        
+        // ==================== ИСПРАВЛЕННЫЙ ТУР ====================
+        function startTour() {
+            tourStep = 0
+            const overlay = document.getElementById('tour-overlay')
+            overlay.style.display = 'flex'          // явно показываем
+            overlay.classList.remove('hidden')
+            localStorage.setItem('tourShown', 'true')
+            showTourStep()
+        }
+        
+        function showTourStep() {
+            const step = tourSteps[tourStep]
+            const element = document.querySelector(step.selector)
+            if (!element) return endTour()
+            
+            const rect = element.getBoundingClientRect()
+            const content = document.getElementById('tour-content')
+            const arrow = document.getElementById('tour-arrow')
+            
+            document.getElementById('tour-title').innerHTML = step.title
+            document.getElementById('tour-text').textContent = step.text
+            
+            // Позиция тултипа (чтобы не перекрывать)
+            if (step.arrow === 'top') {
+                content.style.top = `${rect.top - 170}px`
+                content.style.left = `${rect.left + rect.width / 2 - 140}px`
+                arrow.style.bottom = '-12px'
+                arrow.style.left = '50%'
+                arrow.style.transform = 'rotate(225deg)'
+            } else if (step.arrow === 'left') {
+                content.style.left = `${rect.left - 340}px`
+                content.style.top = `${rect.top + rect.height / 2 - 70}px`
+                arrow.style.right = '-12px'
+                arrow.style.top = '50%'
+                arrow.style.transform = 'rotate(135deg)'
+            } else if (step.arrow === 'right') {
+                content.style.left = `${rect.right + 30}px`
+                content.style.top = `${rect.top + rect.height / 2 - 70}px`
+                arrow.style.left = '-12px'
+                arrow.style.top = '50%'
+                arrow.style.transform = 'rotate(315deg)'
+            } else if (step.arrow === 'bottom') {
+                content.style.top = `${rect.bottom + 20}px`
+                content.style.left = `${rect.left + rect.width / 2 - 140}px`
+                arrow.style.top = '-12px'
+                arrow.style.left = '50%'
+                arrow.style.transform = 'rotate(45deg)'
+            }
+            
+            element.classList.add('tour-step')
+            setTimeout(() => element.classList.remove('tour-step'), 2500)
+        }
+        
+        function nextTourStep() {
+            tourStep++
+            if (tourStep >= tourSteps.length) endTour()
+            else showTourStep()
+        }
+        
+        function prevTourStep() {
+            tourStep = Math.max(0, tourStep - 1)
+            showTourStep()
+        }
+        
+        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: после тура экран НЕ остаётся тёмным
+        function endTour() {
+            const overlay = document.getElementById('tour-overlay')
+            if (overlay) {
+                overlay.classList.add('hidden')
+                overlay.style.display = 'none'           // принудительно убираем
+                overlay.style.opacity = '0'              // на всякий случай
+            }
+            
+            // Восстанавливаем правильный фон страницы
+            if (currentTheme === 'dark') {
+                document.body.style.backgroundColor = '#1e1433'
+            } else {
+                document.body.style.backgroundColor = '#f8f1ff'
+            }
+            
+            console.log('%c✅ Тур завершён. Экран вернулся к обычному тёмно-фиолетовому фону.', 'color:#a78bfa')
         }
         
         // ==================== ЗАПУСК ====================
         function launchApp() {
             initTailwind()
-            // По умолчанию тёмная тема
             document.documentElement.classList.add('dark')
-            console.log('%c🚀 SkillLink запущен! Полноценный демо-сайт готов.', 'color:#a78bfa; font-size:18px; font-weight:bold')
+            console.log('%c🚀 SkillLink переписан и исправлен!', 'color:#a78bfa; font-size:16px')
         }
         
-        // Автозапуск
         window.onload = launchApp
     </script>
 </body>
-</html
+</html>
