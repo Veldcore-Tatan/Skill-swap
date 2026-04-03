@@ -1,295 +1,438 @@
-TYPE html>
+<!DOCTYPE html>
 <html lang="ru" "eng">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillFlow Ultra</title>
+    <title>Skill Swap</title>
     <style>
+        /* Базовые переменные (Светлая тема по умолчанию) */
         :root {
-            --p-main: #8B5CF6; --p-soft: #DDD6FE; --p-dark: #2E1065;
-            --bg: #F5F3FF; --panel: #FFFFFF; --text: #1E1B4B; --text-m: #6B7280;
-            --glass: rgba(255, 255, 255, 0.7);
+            --bg-color: #f4ecf9;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #777777;
+            --primary-color: #9b59b6;
+            --primary-hover: #8e44ad;
+            --border-color: #e0d4e8;
+            --chat-bubble-mine: #d2b4de;
+            --chat-bubble-other: #f4ecf9;
         }
 
-        /* Пресеты палитр */
-        [data-palette="emerald"] { --p-main: #10B981; --p-dark: #064E3B; --p-soft: #D1FAE5; }
-        [data-palette="rose"] { --p-main: #F43F5E; --p-dark: #881337; --p-soft: #FFE4E6; }
-        [data-palette="classic"] { --p-main: #6366F1; --p-dark: #1E1B4B; --p-soft: #E0E7FF; }
-
+        /* Темная тема */
         [data-theme="dark"] {
-            --bg: #0F172A; --panel: #1E293B; --text: #F1F5F9; --text-m: #94A3B8;
-            --glass: rgba(30, 41, 59, 0.7); --p-soft: rgba(139, 92, 246, 0.2);
+            --bg-color: #12091a;
+            --container-bg: #1e112a;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --primary-color: #8e44ad;
+            --primary-hover: #9b59b6;
+            --border-color: #311b42;
+            --chat-bubble-mine: #5b2c6f;
+            --chat-bubble-other: #2c1a3b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: 250px;
+            background-color: var(--container-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Шапка */
+        .header {
+            height: 60px;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        select {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Контейнеры страниц */
+        .page {
+            display: none;
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Посты / Объявления */
+        .post-input {
+            width: 100%;
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 15px;
+            border-radius: 10px;
+            resize: none;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .post-card {
+            background-color: var(--container-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .author {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .skills-tag {
+            background-color: var(--bg-color);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Чаты */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
         
-        body { 
-            background-color: var(--bg); color: var(--text); 
-            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        .chat-user {
+            background-color: var(--container-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* Живой фон */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; opacity: 0.6; }
-
-        /* Стилизация с эффектом стекла */
-        header, .nav-tabs, .view, .modal-content, .messenger-layout {
-            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
+        .chat-user:hover {
+            border-color: var(--primary-color);
         }
 
-        header { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 2rem; background: var(--glass); z-index: 100; }
-        .nav-tabs { display: flex; justify-content: center; gap: 2rem; background: var(--glass); border-bottom: 1px solid var(--p-soft); }
-        .tab-btn { padding: 1rem; cursor: pointer; font-weight: 600; color: var(--text-m); border-bottom: 3px solid transparent; transition: 0.3s; }
-        .tab-btn.active { color: var(--p-main); border-bottom-color: var(--p-main); }
+        /* Настройки профиля */
+        .settings-group {
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
 
-        .app-main { flex: 1; overflow-y: auto; padding: 2rem; position: relative; }
-        .view { display: none; max-width: 1100px; margin: 0 auto; animation: slideUp 0.4s ease; }
-        .view.active { display: block; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px;
+        }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Профиль */
-        .profile-card { background: var(--panel); border-radius: 24px; padding: 2rem; display: flex; gap: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .avatar-huge { width: 120px; height: 120px; border-radius: 30px; background: var(--p-main); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; box-shadow: 0 8px 16px var(--p-soft); cursor: pointer; }
-
-        /* Мессенджер */
-        .messenger-layout { display: flex; height: 75vh; background: var(--panel); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
-        .sidebar { width: 300px; border-right: 1px solid var(--p-soft); display: flex; flex-direction: column; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: rgba(0,0,0,0.02); }
-        .msg-container { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; }
-        .msg { padding: 0.8rem 1.2rem; border-radius: 18px; max-width: 70%; position: relative; font-size: 0.95rem; }
-        .msg.mine { align-self: flex-end; background: var(--p-main); color: white; border-bottom-right-radius: 4px; }
-        .msg.other { align-self: flex-start; background: var(--bg); border: 1px solid var(--p-soft); border-bottom-left-radius: 4px; }
-
-        /* Кнопки и формы */
-        button { padding: 0.6rem 1.2rem; border-radius: 12px; border: none; cursor: pointer; font-weight: 600; background: var(--p-main); color: white; transition: 0.2s; }
-        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        input, select, textarea { padding: 0.8rem; border-radius: 12px; border: 1px solid var(--p-soft); background: var(--bg); color: var(--text); outline: none; }
-
-        /* Палитра */
-        .palette-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.2); }
-
-        /* Инструкция */
-        #guide { position: fixed; bottom: 20px; right: 20px; background: var(--p-dark); color: white; padding: 1rem; border-radius: 15px; display: none; z-index: 1000; max-width: 250px; }
     </style>
 </head>
-<body data-theme="dark" data-palette="default">
+<body data-theme="dark">
 
-    <canvas id="bg-canvas"></canvas>
-
-    <header>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <div class="logo" style="font-size: 1.8rem; font-weight: 900; color: var(--p-main);">SkillFlow</div>
-            <div style="display: flex; gap: 5px;">
-                <div class="palette-dot" style="background: #8B5CF6;" onclick="setPalette('default')"></div>
-                <div class="palette-dot" style="background: #10B981;" onclick="setPalette('emerald')"></div>
-                <div class="palette-dot" style="background: #F43F5E;" onclick="setPalette('rose')"></div>
-                <div class="palette-dot" style="background: #6366F1;" onclick="setPalette('classic')"></div>
-            </div>
-        </div>
-        <div style="display: flex; gap: 1rem;">
-            <button onclick="toggleTheme()" style="background: var(--p-soft); color: var(--p-main);">🌓</button>
-            <button onclick="openModal('edit-profile-modal')">⚙️ Профиль</button>
-        </div>
-    </header>
-
-    <div class="nav-tabs">
-        <div class="tab-btn active" onclick="switchTab(event, 'profile')">Профиль</div>
-        <div class="tab-btn" onclick="switchTab(event, 'feed')">Стена</div>
-        <div class="tab-btn" onclick="switchTab(event, 'chat')">Мессенджер</div>
+    <div class="sidebar">
+        <div class="logo">Skill Swap</div>
+        <div class="nav-item active" onclick="switchPage('feed')" id="nav-feed">Лента</div>
+        <div class="nav-item" onclick="switchPage('search')" id="nav-search">Поиск людей</div>
+        <div class="nav-item" onclick="switchPage('chats')" id="nav-chats">Чаты</div>
+        <div class="nav-item" onclick="switchPage('profile')" id="nav-profile">Профиль</div>
+        <div class="nav-item" onclick="switchPage('settings')" id="nav-settings">Настройки</div>
     </div>
 
-    <main class="app-main">
-        <!-- ТУТ ПРОФИЛЬ -->
-        <section id="view-profile" class="view active">
-            <div class="profile-card">
-                <div class="avatar-huge" id="prof-avatar">A</div>
-                <div style="flex: 1;">
-                    <h1 id="prof-name">Alex Skill</h1>
-                    <p id="prof-bio" style="color: var(--text-m); margin: 0.5rem 0;">Senior JS Developer | Обучаю коду за еду</p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;" id="prof-skills">
-                        <span style="background: var(--p-soft); color: var(--p-main); padding: 0.3rem 0.8rem; border-radius: 8px;">JavaScript</span>
-                        <span style="background: var(--p-soft); color: var(--p-main); padding: 0.3rem 0.8rem; border-radius: 8px;">UI Design</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ТУТ СТЕНА -->
-        <section id="view-feed" class="view">
-            <div style="background: var(--panel); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
-                <textarea id="post-input" placeholder="Поделитесь навыком или мыслью..." style="width: 100%; height: 80px; margin-bottom: 1rem; border: none; background: transparent; font-size: 1.1rem;"></textarea>
-                <button onclick="addPost()">Опубликовать</button>
-            </div>
-            <div id="feed-container"></div>
-        </section>
-
-        <!-- ТУТ ЧАТ -->
-        <section id="view-chat" class="view">
-            <div class="messenger-layout">
-                <div class="sidebar">
-                    <div style="padding: 1rem; border-bottom: 1px solid var(--p-soft);">
-                        <button onclick="createGroup()" style="width: 100%;">+ Создать группу</button>
-                    </div>
-                    <div id="chat-list"></div>
-                </div>
-                <div class="chat-area">
-                    <div id="chat-header" style="padding: 1rem; background: var(--panel); font-weight: bold; border-bottom: 1px solid var(--p-soft);">Выберите чат</div>
-                    <div class="msg-container" id="msg-container"></div>
-                    <div style="padding: 1rem; display: flex; gap: 1rem; background: var(--panel);">
-                        <input type="text" id="chat-input" placeholder="Сообщение..." style="flex: 1; margin: 0;">
-                        <button onclick="sendMsg()">➤</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- МОДАЛКА РЕДАКТИРОВАНИЯ -->
-    <div id="edit-profile-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
-        <div class="modal-content" style="background: var(--panel); padding: 2rem; border-radius: 24px; width: 400px;">
-            <h2>Настройки профиля</h2><br>
-            <input type="text" id="edit-name" placeholder="Имя"><br>
-            <input type="text" id="edit-bio" placeholder="О себе"><br>
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button style="background: gray;" onclick="closeModal()">Отмена</button>
-                <button onclick="saveProfile()">Сохранить</button>
+    <div class="main-content">
+        <div class="header">
+            <h2 id="page-title">Лента</h2>
+            <div class="controls">
+                <button onclick="toggleTheme()" id="theme-btn">Светлая тема</button>
+                <select id="lang-select" onchange="changeLanguage()">
+                    <option value="ru">Русский</option>
+                    <option value="en">English</option>
+                    <option value="kg">Кыргызча</option>
+                </select>
             </div>
         </div>
-    </div>
 
-    <div id="guide">
-        <p>👋 Привет! Ты можешь менять цвета сайта в шапке. <br><br> Нажми на Профиль, чтобы настроить свою страницу.</p>
-        <button onclick="this.parentElement.remove()" style="margin-top: 10px; width: 100%;">Понятно</button>
+        <div id="page-feed" class="page active">
+            <textarea class="post-input" id="new-post-text" placeholder="Поделитесь навыком или ищите опыт..."></textarea>
+            <button onclick="addPost()" id="btn-publish">Опубликовать</button>
+            
+            <div id="posts-container">
+                <div class="post-card">
+                    <div class="post-header">
+                        <span class="author">Alisher_Dev</span>
+                        <span class="skills-tag">JavaScript, HTML</span>
+                    </div>
+                    <p>Всем привет! Я начинающий программист из Бишкека. Ищу дизайнера для совместного проекта Skill Swap. Могу научить верстке!</p>
+                </div>
+                <div class="post-card">
+                    <div class="post-header">
+                        <span class="author">Designer_Anna</span>
+                        <span class="skills-tag">UI/UX, Figma</span>
+                    </div>
+                    <p>Готова помочь с дизайном интерфейсов в обмен на помощь с изучением английского языка. Пишите в личку!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-search" class="page">
+            <input type="text" id="search-input" placeholder="Введите навык (например: Python, Дизайн, Английский)">
+            <button id="btn-search" style="width:100%; margin-top:10px;">Найти специалиста</button>
+            <p style="margin-top: 20px; color: var(--text-muted);" id="search-desc">Здесь будут отображаться профили пользователей...</p>
+        </div>
+
+        <div id="page-chats" class="page">
+            <div class="chat-list">
+                <div class="chat-user">
+                    <span class="author">Designer_Anna</span>
+                    <span class="skills-tag">Был(а) недавно</span>
+                </div>
+                <div class="chat-user">
+                    <span class="author">JS_Mentor</span>
+                    <span class="skills-tag">Онлайн</span>
+                </div>
+                <button id="btn-new-chat">Создать групповой чат</button>
+            </div>
+        </div>
+
+        <div id="page-profile" class="page">
+            <div class="settings-group">
+                <h3 id="prof-title">Ваш профиль</h3>
+                <label id="lbl-nick">Никнейм (уникальный):</label>
+                <input type="text" value="Alisher_Dev" id="input-nick">
+                <label id="lbl-pass">Пароль:</label>
+                <input type="password" value="password123">
+                <button id="btn-save-prof">Сохранить</button>
+            </div>
+        </div>
+
+        <div id="page-settings" class="page">
+            <div class="settings-group">
+                <h3 id="set-ui">Настройки интерфейса</h3>
+                <p style="margin-top: 10px; color: var(--text-muted);" id="set-desc">Тема и язык изменяются в верхней панели.</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- 1. ЖИВОЙ ФОН (PARTICLES) ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-            }
-            update() {
-                this.x += this.vx; this.y += this.vy;
-                if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
+        // --- 1. ЛОГИКА ТЕМЫ (Светлая / Темная) ---
+        let isDark = true;
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            const currentLang = document.getElementById('lang-select').value;
+            
+            isDark = !isDark;
+            body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            
+            // Меняем текст кнопки в зависимости от языка
+            btn.innerText = isDark ? dict[currentLang].themeLight : dict[currentLang].themeDark;
         }
 
-        for(let i=0; i<50; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--p-main');
-            particles.forEach(p => {
-                p.update();
-                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+        // --- 2. ЛОГИКА ВКЛАДОК (Навигация) ---
+        function switchPage(pageId) {
+            // Скрываем все страницы
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
             });
-            requestAnimationFrame(animate);
-        }
-        animate();
+            // Убираем активный класс у кнопок меню
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
 
-        // --- 2. СИСТЕМА ПАЛИТРЫ И ТЕМЫ ---
-        function setPalette(p) { document.body.setAttribute('data-palette', p); }
-        function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark'; }
-
-        // --- 3. ЛОГИКА ВКЛАДОК ---
-        function switchTab(e, tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            e.target.classList.add('active');
-            document.getElementById('view-' + tab).classList.add('active');
+            // Показываем нужную
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+            
+            // Меняем заголовок
+            const currentLang = document.getElementById('lang-select').value;
+            document.getElementById('page-title').innerText = dict[currentLang]['nav_' + pageId];
         }
 
-        // --- 4. РЕДАКТОР ПРОФИЛЯ ---
-        function openModal(id) {
-            document.getElementById(id).style.display = 'flex';
-            document.getElementById('edit-name').value = document.getElementById('prof-name').innerText;
-            document.getElementById('edit-bio').value = document.getElementById('prof-bio').innerText;
-        }
-        function closeModal() { document.querySelectorAll('[id$="-modal"]').forEach(m => m.style.display = 'none'); }
-        function saveProfile() {
-            document.getElementById('prof-name').innerText = document.getElementById('edit-name').value;
-            document.getElementById('prof-bio').innerText = document.getElementById('edit-bio').value;
-            document.getElementById('prof-avatar').innerText = document.getElementById('edit-name').value[0];
-            closeModal();
-        }
-
-        // --- 5. СТЕНА (ПОСТЫ) ---
+        // --- 3. ЛОГИКА ДОБАВЛЕНИЯ ПОСТОВ (Локально) ---
         function addPost() {
-            const txt = document.getElementById('post-input').value;
-            if(!txt) return;
-            const card = document.createElement('div');
-            card.className = 'profile-card animate-fade';
-            card.style.marginBottom = '1rem';
-            card.innerHTML = `<div><strong>${document.getElementById('prof-name').innerText}</strong><p>${txt}</p><br><small>❤️ 0 | 👁️ 1</small></div>`;
-            document.getElementById('feed-container').prepend(card);
-            document.getElementById('post-input').value = '';
+            const text = document.getElementById('new-post-text').value;
+            if (!text.trim()) return;
+
+            const container = document.getElementById('posts-container');
+            const nick = document.getElementById('input-nick').value;
+
+            const postHTML = `
+                <div class="post-card">
+                    <div class="post-header">
+                        <span class="author">${nick}</span>
+                        <span class="skills-tag">Новый навык</span>
+                    </div>
+                    <p>${text}</p>
+                </div>
+            `;
+            
+            // Добавляем в начало
+            container.insertAdjacentHTML('afterbegin', postHTML);
+            document.getElementById('new-post-text').value = '';
         }
 
-        // --- 6. ЧАТЫ ---
-        let currentChat = null;
-        const chats = [
-            { id: 1, name: 'Мария (Английский)', msgs: ['Привет! Как успехи в JS?'] },
-            { id: 2, name: 'Группа: Дизайнеры', msgs: ['Кто посмотрит мой макет?'] }
-        ];
-
-        function renderChats() {
-            const list = document.getElementById('chat-list');
-            list.innerHTML = '';
-            chats.forEach(c => {
-                const item = document.createElement('div');
-                item.style.padding = '1rem'; item.style.cursor = 'pointer'; item.style.borderBottom = '1px solid var(--p-soft)';
-                item.innerText = c.name;
-                item.onclick = () => selectChat(c);
-                list.appendChild(item);
-            });
-        }
-
-        function selectChat(chat) {
-            currentChat = chat;
-            document.getElementById('chat-header').innerText = chat.name;
-            const container = document.getElementById('msg-container');
-            container.innerHTML = '';
-            chat.msgs.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'msg other'; div.innerText = m;
-                container.appendChild(div);
-            });
-        }
-
-        function sendMsg() {
-            const input = document.getElementById('chat-input');
-            if(!input.value || !currentChat) return;
-            const div = document.createElement('div');
-            div.className = 'msg mine'; div.innerText = input.value;
-            document.getElementById('msg-container').appendChild(div);
-            currentChat.msgs.push(input.value);
-            input.value = '';
-            document.getElementById('msg-container').scrollTop = 9999;
-        }
-
-        function createGroup() {
-            const name = prompt("Введите название группы:");
-            if(name) {
-                chats.push({ id: chats.length+1, name: "👥 " + name, msgs: [] });
-                renderChats();
+        // --- 4. МНОГОЯЗЫЧНОСТЬ (Словари) ---
+        const dict = {
+            ru: {
+                nav_feed: "Лента", nav_search: "Поиск людей", nav_chats: "Чаты",
+                nav_profile: "Профиль", nav_settings: "Настройки",
+                themeLight: "Светлая тема", themeDark: "Темная тема",
+                placeholder_post: "Поделитесь навыком или ищите опыт...",
+                btn_publish: "Опубликовать", btn_search: "Найти специалиста",
+                search_placeholder: "Введите навык (например: Python, Дизайн)",
+                btn_new_chat: "Создать групповой чат",
+                prof_title: "Ваш профиль", lbl_nick: "Никнейм (уникальный):",
+                lbl_pass: "Пароль:", btn_save: "Сохранить", set_ui: "Настройки интерфейса"
+            },
+            en: {
+                nav_feed: "Feed", nav_search: "Find People", nav_chats: "Chats",
+                nav_profile: "Profile", nav_settings: "Settings",
+                themeLight: "Light Theme", themeDark: "Dark Theme",
+                placeholder_post: "Share a skill or look for experience...",
+                btn_publish: "Publish", btn_search: "Find Specialist",
+                search_placeholder: "Enter skill (e.g., Python, Design)",
+                btn_new_chat: "Create Group Chat",
+                prof_title: "Your Profile", lbl_nick: "Nickname (Unique):",
+                lbl_pass: "Password:", btn_save: "Save", set_ui: "Interface Settings"
+            },
+            kg: {
+                nav_feed: "Тасма", nav_search: "Адамдарды издөө", nav_chats: "Чаттар",
+                nav_profile: "Профиль", nav_settings: "Ырастоолор",
+                themeLight: "Жарык тема", themeDark: "Караңгы тема",
+                placeholder_post: "Билимиңиз менен бөлүшүңүз же тажрыйба издеңиз...",
+                btn_publish: "Жарыялоо", btn_search: "Адисти табуу",
+                search_placeholder: "Көндүмдү жазыңыз (мисалы: Python, Дизайн)",
+                btn_new_chat: "Топтук чат түзүү",
+                prof_title: "Сиздин профилиңиз", lbl_nick: "Никнейм (Уникалдуу):",
+                lbl_pass: "Сыр сөз:", btn_save: "Сактоо", set_ui: "Интерфейс ырастоолору"
             }
-        }
+        };
 
-        // Инициализация
-        window.onload = () => {
-            renderChats();
-            setTimeout(() => document.getElementById('guide').style.display = 'block', 2000);
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            const t = dict[lang];
+
+            // Меню
+            document.getElementById('nav-feed').innerText = t.nav_feed;
+            document.getElementById('nav-search').innerText = t.nav_search;
+            document.getElementById('nav-chats').innerText = t.nav_chats;
+            document.getElementById('nav-profile').innerText = t.nav_profile;
+            document.getElementById('nav-settings').innerText = t.nav_settings;
+
+            // Кнопки и инпуты
+            document.getElementById('theme-btn').innerText = isDark ? t.themeLight : t.themeDark;
+            document.getElementById('new-post-text').placeholder = t.placeholder_post;
+            document.getElementById('btn-publish').innerText = t.btn_publish;
+            document.getElementById('search-input').placeholder = t.search_placeholder;
+            document.getElementById('btn-search').innerText = t.btn_search;
+            document.getElementById('btn-new-chat').innerText = t.btn_new_chat;
+            
+            // Профиль и настройки
+            document.getElementById('prof-title').innerText = t.prof_title;
+            document.getElementById('lbl-nick').innerText = t.lbl_nick;
+            document.getElementById('lbl-pass').innerText = t.lbl_pass;
+            document.getElementById('btn-save-prof').innerText = t.btn_save;
+            document.getElementById('set-ui').innerText = t.set_ui;
+
+            // Обновляем текущий заголовок
+            const activePageId = document.querySelector('.page.active').id.replace('page-', '');
+            document.getElementById('page-title').innerText = t['nav_' + activePageId];
         }
     </script>
 </body>
