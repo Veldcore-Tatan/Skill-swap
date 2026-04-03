@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" "eng">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +47,40 @@
             overflow: hidden;
         }
 
-        /* Боковая панель */
+        /* Панель в стиле Discord (Слева) */
+        .discord-sidebar {
+            width: 70px;
+            background-color: var(--container-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .server-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-color);
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .server-icon:hover {
+            border-radius: 15px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Боковая панель (Меню) */
         .sidebar {
             width: 250px;
             background-color: var(--container-bg);
@@ -144,13 +177,13 @@
         /* Посты / Объявления */
         .post-input {
             width: 100%;
-            background-color: var(--container-bg);
+            background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             color: var(--text-color);
             padding: 15px;
             border-radius: 10px;
             resize: none;
-            height: 100px;
+            height: 80px;
             margin-bottom: 10px;
         }
 
@@ -166,6 +199,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            align-items: center;
         }
 
         .author {
@@ -179,6 +213,41 @@
             border-radius: 12px;
             font-size: 12px;
             color: var(--text-muted);
+        }
+
+        /* Улучшенные посты с медиа */
+        .post-media-preview {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+
+        .btn-action {
+            background: none;
+            color: var(--text-muted);
+            padding: 5px 10px;
+            font-weight: normal;
+        }
+
+        .btn-action:hover, .btn-action.liked {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        .file-upload-label {
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-right: 15px;
         }
 
         /* Чаты */
@@ -218,72 +287,7 @@
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            border-radius: /* Панель в стиле Discord (Слева) */
-        .discord-sidebar {
-            width: 70px;
-            background-color: var(--container-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 0;
-            gap: 15px;
-            z-index: 10;
-        }
-
-        .server-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--primary-color);
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .server-icon:hover {
-            border-radius: 15px;
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        /* Улучшенные посты с медиа */
-        .post-media-preview {
-            max-width: 100%;
-            border-radius: 10px;
-            margin: 10px 0;
-            display: none; /* Скрыто, пока нет картинки */
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-        }
-
-        .btn-action {
-            background: none;
-            color: var(--text-muted);
-            padding: 5px 10px;
-            font-weight: normal;
-        }
-
-        .btn-action:hover, .btn-action.liked {
-            background-color: var(--bg-color);
-            color: var(--primary-color);
-        }
-
-        .file-upload-label {
-            cursor: pointer;
-            color: var(--primary-color);
-            font-size: 14px;
-            margin-right: 15px;
+            border-radius: 5px; /* Исправлена ошибка тут */
         }
 
         /* Форма резюме */
@@ -296,17 +300,19 @@
             border-radius: 5px;
             padding: 10px;
             resize: none;
-        } 
+        }
     </style>
 </head>
 <body data-theme="dark">
-<div class="discord-sidebar">
+
+    <div class="discord-sidebar">
         <div class="server-icon" title="Главная">SS</div>
         <div class="server-icon" title="Группа: Программисты">💻</div>
         <div class="server-icon" title="Группа: Дизайнеры">🎨</div>
         <div class="server-icon" title="Чат: Анна" style="background-image: url('https://via.placeholder.com/50'); background-size: cover;"></div>
         <div class="server-icon" title="Создать группу">+</div>
     </div>
+
     <div class="sidebar">
         <div class="logo">Skill Swap</div>
         <div class="nav-item active" onclick="switchPage('feed')" id="nav-feed">Лента</div>
@@ -330,24 +336,34 @@
         </div>
 
         <div id="page-feed" class="page active">
-            <textarea class="post-input" id="new-post-text" placeholder="Поделитесь навыком или ищите опыт..."></textarea>
-            <button onclick="addPost()" id="btn-publish">Опубликовать</button>
-            
+            <div style="background-color: var(--container-bg); padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                <textarea class="post-input" id="new-post-text" placeholder="Что у вас нового? Поделитесь навыком или видео..."></textarea>
+                
+                <img id="draft-media-preview" class="post-media-preview" src="" alt="Превью">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <label for="post-file-upload" class="file-upload-label">📷 Прикрепить фото/видео</label>
+                        <input type="file" id="post-file-upload" accept="image/*,video/*" style="display: none;" onchange="previewMedia(event)">
+                    </div>
+                    <button onclick="addEnhancedPost()" id="btn-publish">Опубликовать</button>
+                </div>
+            </div>
             
             <div id="posts-container">
                 <div class="post-card">
                     <div class="post-header">
-                        <span class="author">Alisher_Dev</span>
-                        <span class="skills-tag">JavaScript, HTML</span>
+                        <div>
+                            <span class="author">Alisher_Dev</span>
+                            <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;">Вчера</span>
+                        </div>
+                        <button class="btn-action">Подписаться</button>
                     </div>
                     <p>Всем привет! Я начинающий программист из Бишкека. Ищу дизайнера для совместного проекта Skill Swap. Могу научить верстке!</p>
-                </div>
-                <div class="post-card">
-                    <div class="post-header">
-                        <span class="author">Designer_Anna</span>
-                        <span class="skills-tag">UI/UX, Figma</span>
+                    <div class="post-actions">
+                        <button class="btn-action" onclick="toggleLike(this)">❤️ Лайк (<span>12</span>)</button>
+                        <button class="btn-action">💬 Написать в личку</button>
                     </div>
-                    <p>Готова помочь с дизайном интерфейсов в обмен на помощь с изучением английского языка. Пишите в личку!</p>
                 </div>
             </div>
         </div>
@@ -382,9 +398,9 @@
                     <button class="btn-action">Загрузить аватар</button>
                 </div>
                 
-                <label>Никнейм:</label>
+                <label id="lbl-nick">Никнейм (уникальный):</label>
                 <input type="text" value="Alisher_Dev" id="input-nick">
-                <label>Пароль:</label>
+                <label id="lbl-pass">Пароль:</label>
                 <input type="password" value="password123">
             </div>
 
@@ -399,7 +415,7 @@
                 <label>Ссылка на GitHub / Behance:</label>
                 <input type="url" placeholder="https://github.com/вашин">
                 
-                <button style="margin-top: 15px; width: 100%;">Сохранить профиль и резюме</button>
+                <button id="btn-save-prof" style="margin-top: 15px; width: 100%;">Сохранить профиль и резюме</button>
             </div>
         </div>
 
@@ -409,7 +425,6 @@
                 <p style="margin-top: 10px; color: var(--text-muted);" id="set-desc">Тема и язык изменяются в верхней панели.</p>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -422,87 +437,54 @@
             
             isDark = !isDark;
             body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            
-            // Меняем текст кнопки в зависимости от языка
             btn.innerText = isDark ? dict[currentLang].themeLight : dict[currentLang].themeDark;
         }
 
-        // --- 2. ЛОГИКА ВКЛАДОК (Навигация) ---
+        // --- 2. ЛОГИКА ВКЛАДОК ---
         function switchPage(pageId) {
-            // Скрываем все страницы
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            // Убираем активный класс у кнопок меню
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-            // Показываем нужную
             document.getElementById('page-' + pageId).classList.add('active');
             document.getElementById('nav-' + pageId).classList.add('active');
             
-            // Меняем заголовок
             const currentLang = document.getElementById('lang-select').value;
             document.getElementById('page-title').innerText = dict[currentLang]['nav_' + pageId];
         }
 
-        // --- 3. ЛОГИКА ДОБАВЛЕНИЯ ПОСТОВ (Локально) ---
-        function addPost() {
-            const text = document.getElementById('new-post-text').value;
-            if (!text.trim()) return;
-
-            const container = document.getElementById('posts-container');
-            const nick = document.getElementById('input-nick').value;
-
-            const postHTML = `
-                <div class="post-card">
-                    <div class="post-header">
-                        <span class="author">${nick}</span>
-                        <span class="skills-tag">Новый навык</span>
-                    </div>
-                    <p>${text}</p>
-                </div>
-            `;
-            
-            // Добавляем в начало
-            container.insertAdjacentHTML('afterbegin', postHTML);
-            document.getElementById('new-post-text').value = '';
-        }
-
-        // --- 4. МНОГОЯЗЫЧНОСТЬ (Словари) ---
+        // --- 3. МНОГОЯЗЫЧНОСТЬ ---
         const dict = {
             ru: {
                 nav_feed: "Лента", nav_search: "Поиск людей", nav_chats: "Чаты",
                 nav_profile: "Профиль", nav_settings: "Настройки",
                 themeLight: "Светлая тема", themeDark: "Темная тема",
-                placeholder_post: "Поделитесь навыком или ищите опыт...",
+                placeholder_post: "Что у вас нового? Поделитесь навыком или видео...",
                 btn_publish: "Опубликовать", btn_search: "Найти специалиста",
                 search_placeholder: "Введите навык (например: Python, Дизайн)",
                 btn_new_chat: "Создать групповой чат",
-                prof_title: "Ваш профиль", lbl_nick: "Никнейм (уникальный):",
-                lbl_pass: "Пароль:", btn_save: "Сохранить", set_ui: "Настройки интерфейса"
+                prof_title: "Настройки аккаунта", lbl_nick: "Никнейм (уникальный):",
+                lbl_pass: "Пароль:", btn_save: "Сохранить профиль", set_ui: "Настройки интерфейса"
             },
             en: {
                 nav_feed: "Feed", nav_search: "Find People", nav_chats: "Chats",
                 nav_profile: "Profile", nav_settings: "Settings",
                 themeLight: "Light Theme", themeDark: "Dark Theme",
-                placeholder_post: "Share a skill or look for experience...",
+                placeholder_post: "What's new? Share a skill or video...",
                 btn_publish: "Publish", btn_search: "Find Specialist",
                 search_placeholder: "Enter skill (e.g., Python, Design)",
                 btn_new_chat: "Create Group Chat",
-                prof_title: "Your Profile", lbl_nick: "Nickname (Unique):",
-                lbl_pass: "Password:", btn_save: "Save", set_ui: "Interface Settings"
+                prof_title: "Account Settings", lbl_nick: "Nickname (Unique):",
+                lbl_pass: "Password:", btn_save: "Save Profile", set_ui: "Interface Settings"
             },
             kg: {
                 nav_feed: "Тасма", nav_search: "Адамдарды издөө", nav_chats: "Чаттар",
                 nav_profile: "Профиль", nav_settings: "Ырастоолор",
                 themeLight: "Жарык тема", themeDark: "Караңгы тема",
-                placeholder_post: "Билимиңиз менен бөлүшүңүз же тажрыйба издеңиз...",
+                placeholder_post: "Билимиңиз менен бөлүшүңүз же видео жүктөңүз...",
                 btn_publish: "Жарыялоо", btn_search: "Адисти табуу",
                 search_placeholder: "Көндүмдү жазыңыз (мисалы: Python, Дизайн)",
                 btn_new_chat: "Топтук чат түзүү",
-                prof_title: "Сиздин профилиңиз", lbl_nick: "Никнейм (Уникалдуу):",
+                prof_title: "Аккаунт ырастоолору", lbl_nick: "Никнейм (Уникалдуу):",
                 lbl_pass: "Сыр сөз:", btn_save: "Сактоо", set_ui: "Интерфейс ырастоолору"
             }
         };
@@ -511,14 +493,12 @@
             const lang = document.getElementById('lang-select').value;
             const t = dict[lang];
 
-            // Меню
             document.getElementById('nav-feed').innerText = t.nav_feed;
             document.getElementById('nav-search').innerText = t.nav_search;
             document.getElementById('nav-chats').innerText = t.nav_chats;
             document.getElementById('nav-profile').innerText = t.nav_profile;
             document.getElementById('nav-settings').innerText = t.nav_settings;
 
-            // Кнопки и инпуты
             document.getElementById('theme-btn').innerText = isDark ? t.themeLight : t.themeDark;
             document.getElementById('new-post-text').placeholder = t.placeholder_post;
             document.getElementById('btn-publish').innerText = t.btn_publish;
@@ -526,24 +506,22 @@
             document.getElementById('btn-search').innerText = t.btn_search;
             document.getElementById('btn-new-chat').innerText = t.btn_new_chat;
             
-            // Профиль и настройки
             document.getElementById('prof-title').innerText = t.prof_title;
             document.getElementById('lbl-nick').innerText = t.lbl_nick;
             document.getElementById('lbl-pass').innerText = t.lbl_pass;
             document.getElementById('btn-save-prof').innerText = t.btn_save;
             document.getElementById('set-ui').innerText = t.set_ui;
 
-            // Обновляем текущий заголовок
             const activePageId = document.querySelector('.page.active').id.replace('page-', '');
-            document.getElementById('page-title').innerText = t['nav_' + // --- 5. ЛОГИКА МЕДИА И НОВЫХ ПОСТОВ ---
-        
-        let currentDraftMediaUrl = ""; // Временная ссылка на картинку
+            document.getElementById('page-title').innerText = t['nav_' + activePageId];
+        }
 
-        // Функция показа картинки перед публикацией
+        // --- 4. ЛОГИКА МЕДИА И НОВЫХ ПОСТОВ ---
+        let currentDraftMediaUrl = "";
+
         function previewMedia(event) {
             const file = event.target.files[0];
             if (file) {
-                // Создаем временную ссылку на файл в браузере
                 currentDraftMediaUrl = URL.createObjectURL(file);
                 const previewImg = document.getElementById('draft-media-preview');
                 previewImg.src = currentDraftMediaUrl;
@@ -551,15 +529,13 @@
             }
         }
 
-        // Функция добавления продвинутого поста
         function addEnhancedPost() {
             const text = document.getElementById('new-post-text').value;
-            if (!text.trim() && !currentDraftMediaUrl) return; // Не публикуем пустоту
+            if (!text.trim() && !currentDraftMediaUrl) return; 
 
             const container = document.getElementById('posts-container');
             const nick = document.getElementById('input-nick').value;
             
-            // Если есть картинка, добавляем тег <img>
             const imageHTML = currentDraftMediaUrl 
                 ? `<img src="${currentDraftMediaUrl}" class="post-media-preview" style="display:block;">` 
                 : '';
@@ -581,9 +557,31 @@
                         <button class="btn-action">💬 Написать в личку</button>
                     </div>
                 </div>
-                }
-         }
-             </script >
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', postHTML);
+            
+            // Очистка полей ввода после публикации
+            document.getElementById('new-post-text').value = '';
+            document.getElementById('draft-media-preview').style.display = 'none';
+            document.getElementById('draft-media-preview').src = '';
+            document.getElementById('post-file-upload').value = '';
+            currentDraftMediaUrl = "";
+            
+            if (window.observeNewElements) window.observeNewElements();
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const span = btn.querySelector('span');
+            let likes = parseInt(span.innerText);
+            if (btn.classList.contains('liked')) {
+                span.innerText = likes + 1;
+            } else {
+                span.innerText = likes - 1;
+            }
+        }
+    </script>
     <script src="animations.js"></script>
 </body>
 </html>
