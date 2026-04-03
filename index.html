@@ -581,33 +581,9 @@
                         <button class="btn-action">💬 Написать в личку</button>
                     </div>
                 </div>
-            `;
-            
-            container.insertAdjacentHTML('afterbegin', postHTML);
-            
-            // Очищаем форму
-            document.getElementById('new-post-text').value = '';
-            document.getElementById('draft-media-preview').style.display = 'none';
-            document.getElementById('draft-media-preview').src = '';
-            document.getElementById('post-file-upload').value = '';
-            currentDraftMediaUrl = "";
-            
-            // Вызываем оптимизацию из прошлого файла, если она подключена
-            if (window.observeNewElements) window.observeNewElements();
-        }
-
-        // Простая функция лайка
-        function toggleLike(btn) {
-            btn.classList.toggle('liked');
-            const span = btn.querySelector('span');
-            let likes = parseInt(span.innerText);
-            if (btn.classList.contains('liked')) {
-                span.innerText = likes + 1;
-            } else {
-                span.innerText = likes - 1;
-            }
-        }
-    </script >
+                }
+         }
+             </script >
     <script src="animations.js"></script>
 </body>
 </html>
