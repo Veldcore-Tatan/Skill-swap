@@ -535,9 +535,7 @@
 
             // Обновляем текущий заголовок
             const activePageId = document.querySelector('.page.active').id.replace('page-', '');
-            document.getElementById('page-title').innerText = t['nav_' + activePageId];
-        }
-    <// --- 5. ЛОГИКА МЕДИА И НОВЫХ ПОСТОВ ---
+            document.getElementById('page-title').innerText = t['nav_' + // --- 5. ЛОГИКА МЕДИА И НОВЫХ ПОСТОВ ---
         
         let currentDraftMediaUrl = ""; // Временная ссылка на картинку
 
@@ -608,7 +606,8 @@
             } else {
                 span.innerText = likes - 1;
             }
-        }/ >
+        }
+    </script >
     <script src="animations.js"></script>
 </body>
 </html>
