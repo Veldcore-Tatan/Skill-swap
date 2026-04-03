@@ -300,7 +300,13 @@
     </style>
 </head>
 <body data-theme="dark">
-
+<div class="discord-sidebar">
+        <div class="server-icon" title="Главная">SS</div>
+        <div class="server-icon" title="Группа: Программисты">💻</div>
+        <div class="server-icon" title="Группа: Дизайнеры">🎨</div>
+        <div class="server-icon" title="Чат: Анна" style="background-image: url('https://via.placeholder.com/50'); background-size: cover;"></div>
+        <div class="server-icon" title="Создать группу">+</div>
+    </div>
     <div class="sidebar">
         <div class="logo">Skill Swap</div>
         <div class="nav-item active" onclick="switchPage('feed')" id="nav-feed">Лента</div>
@@ -326,6 +332,7 @@
         <div id="page-feed" class="page active">
             <textarea class="post-input" id="new-post-text" placeholder="Поделитесь навыком или ищите опыт..."></textarea>
             <button onclick="addPost()" id="btn-publish">Опубликовать</button>
+            
             
             <div id="posts-container">
                 <div class="post-card">
@@ -367,12 +374,32 @@
 
         <div id="page-profile" class="page">
             <div class="settings-group">
-                <h3 id="prof-title">Ваш профиль</h3>
-                <label id="lbl-nick">Никнейм (уникальный):</label>
+                <h3 id="prof-title">Настройки аккаунта</h3>
+                <div style="display: flex; gap: 20px; align-items: center; margin: 15px 0;">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background-color: var(--bg-color); display: flex; justify-content: center; align-items: center; cursor: pointer;">
+                        📷
+                    </div>
+                    <button class="btn-action">Загрузить аватар</button>
+                </div>
+                
+                <label>Никнейм:</label>
                 <input type="text" value="Alisher_Dev" id="input-nick">
-                <label id="lbl-pass">Пароль:</label>
+                <label>Пароль:</label>
                 <input type="password" value="password123">
-                <button id="btn-save-prof">Сохранить</button>
+            </div>
+
+            <div class="settings-group">
+                <h3>Ваше IT-Резюме (Portfolio)</h3>
+                <label>О себе (Краткое био):</label>
+                <textarea class="resume-textarea" placeholder="Напишите о своих целях и опыте..."></textarea>
+                
+                <label>Ключевые навыки (через запятую):</label>
+                <input type="text" placeholder="JavaScript, Python, Figma...">
+                
+                <label>Ссылка на GitHub / Behance:</label>
+                <input type="url" placeholder="https://github.com/вашин">
+                
+                <button style="margin-top: 15px; width: 100%;">Сохранить профиль и резюме</button>
             </div>
         </div>
 
@@ -510,7 +537,78 @@
             const activePageId = document.querySelector('.page.active').id.replace('page-', '');
             document.getElementById('page-title').innerText = t['nav_' + activePageId];
         }
-    </script>
+    <// --- 5. ЛОГИКА МЕДИА И НОВЫХ ПОСТОВ ---
+        
+        let currentDraftMediaUrl = ""; // Временная ссылка на картинку
+
+        // Функция показа картинки перед публикацией
+        function previewMedia(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Создаем временную ссылку на файл в браузере
+                currentDraftMediaUrl = URL.createObjectURL(file);
+                const previewImg = document.getElementById('draft-media-preview');
+                previewImg.src = currentDraftMediaUrl;
+                previewImg.style.display = 'block';
+            }
+        }
+
+        // Функция добавления продвинутого поста
+        function addEnhancedPost() {
+            const text = document.getElementById('new-post-text').value;
+            if (!text.trim() && !currentDraftMediaUrl) return; // Не публикуем пустоту
+
+            const container = document.getElementById('posts-container');
+            const nick = document.getElementById('input-nick').value;
+            
+            // Если есть картинка, добавляем тег <img>
+            const imageHTML = currentDraftMediaUrl 
+                ? `<img src="${currentDraftMediaUrl}" class="post-media-preview" style="display:block;">` 
+                : '';
+
+            const postHTML = `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div>
+                            <span class="author">${nick}</span>
+                            <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;">Только что</span>
+                        </div>
+                        <button class="btn-action">Подписаться</button>
+                    </div>
+                    <p style="margin-bottom: 10px;">${text}</p>
+                    ${imageHTML}
+                    
+                    <div class="post-actions">
+                        <button class="btn-action" onclick="toggleLike(this)">❤️ Лайк (<span>0</span>)</button>
+                        <button class="btn-action">💬 Написать в личку</button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('afterbegin', postHTML);
+            
+            // Очищаем форму
+            document.getElementById('new-post-text').value = '';
+            document.getElementById('draft-media-preview').style.display = 'none';
+            document.getElementById('draft-media-preview').src = '';
+            document.getElementById('post-file-upload').value = '';
+            currentDraftMediaUrl = "";
+            
+            // Вызываем оптимизацию из прошлого файла, если она подключена
+            if (window.observeNewElements) window.observeNewElements();
+        }
+
+        // Простая функция лайка
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const span = btn.querySelector('span');
+            let likes = parseInt(span.innerText);
+            if (btn.classList.contains('liked')) {
+                span.innerText = likes + 1;
+            } else {
+                span.innerText = likes - 1;
+            }
+        }/ >
     <script src="animations.js"></script>
 </body>
 </html>
